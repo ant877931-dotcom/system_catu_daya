@@ -251,8 +251,8 @@
         }
 
         .battery-body {
-            width: 80%;
-            max-width: 300px;
+            width: 100%;
+            max-width: 250px;
             height: 60px;
             border: 4px solid var(--text-main);
             border-radius: 8px;
@@ -356,8 +356,16 @@
             gap: 1.5rem;
         }
 
+        .chart-scroll-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 10px;
+        }
+
         .line-chart-container {
             width: 100%;
+            min-width: 800px;
             height: 350px;
             background: transparent;
             border-radius: var(--radius-lg);
@@ -392,6 +400,16 @@
             .status-banner {
                 font-size: 1.25rem;
                 padding: 1rem;
+            }
+            .top-panel {
+                grid-template-columns: 1fr;
+            }
+            .card {
+                padding: 1rem;
+            }
+            .card h2 {
+                font-size: 1.1rem;
+                margin-bottom: 1rem;
             }
             .gauge-grid {
                 grid-template-columns: 1fr;
@@ -522,13 +540,13 @@
 
             <!-- 7 Line Charts Grid -->
             <div class="line-charts-grid" id="history-charts-container">
-                <div id="chart-hist-teg-ac" class="line-chart-container"></div>
-                <div id="chart-hist-arus-ac" class="line-chart-container"></div>
-                <div id="chart-hist-daya-ac" class="line-chart-container"></div>
-                <div id="chart-hist-energi-ac" class="line-chart-container"></div>
-                <div id="chart-hist-teg-bat" class="line-chart-container"></div>
-                <div id="chart-hist-arus-bat" class="line-chart-container"></div>
-                <div id="chart-hist-soc" class="line-chart-container"></div>
+                <div class="chart-scroll-wrapper"><div id="chart-hist-teg-ac" class="line-chart-container"></div></div>
+                <div class="chart-scroll-wrapper"><div id="chart-hist-arus-ac" class="line-chart-container"></div></div>
+                <div class="chart-scroll-wrapper"><div id="chart-hist-daya-ac" class="line-chart-container"></div></div>
+                <div class="chart-scroll-wrapper"><div id="chart-hist-energi-ac" class="line-chart-container"></div></div>
+                <div class="chart-scroll-wrapper"><div id="chart-hist-teg-bat" class="line-chart-container"></div></div>
+                <div class="chart-scroll-wrapper"><div id="chart-hist-arus-bat" class="line-chart-container"></div></div>
+                <div class="chart-scroll-wrapper"><div id="chart-hist-soc" class="line-chart-container"></div></div>
             </div>
         </section>
 
@@ -671,14 +689,18 @@
 
 
         // Responsive Resize Handler for ALL charts
+        const allCharts = [
+            chartTegAc, chartArusAc, chartDayaAc, 
+            chartTegBat, chartArusBat,
+            ...allHistCharts
+        ];
+
         window.addEventListener('resize', function() {
-            chartTegAc.resize();
-            chartArusAc.resize();
-            chartDayaAc.resize();
-            chartTegBat.resize();
-            chartArusBat.resize();
-            
-            allHistCharts.forEach(c => c && c.resize());
+            allCharts.forEach(chart => {
+                if (chart) {
+                    chart.resize();
+                }
+            });
         });
 
         // ------------------------------------------
