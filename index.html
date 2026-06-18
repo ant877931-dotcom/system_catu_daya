@@ -22,10 +22,10 @@
            CSS VARIABLES & GLOBAL STYLES
            ========================================= */
         :root {
-            --bg-color: #121212;
-            --card-bg: #1E1E1E;
-            --text-main: #E0E0E0;
-            --text-muted: #A0A0A0;
+            --bg-color: #F4F7F6;
+            --card-bg: #FFFFFF;
+            --text-main: #333333;
+            --text-muted: #666666;
             
             --primary: #3182ce;
             --primary-bg: #1A365D;
@@ -33,7 +33,7 @@
             --danger: #e53e3e;
             --warning: #dd6b20;
             
-            --border-color: #333333;
+            --border-color: #E0E0E0;
             --radius-md: 0.75rem;
             --radius-lg: 1.25rem;
             
@@ -318,7 +318,7 @@
             padding: 0.6rem 1rem;
             border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
-            background-color: #2A2A2A;
+            background-color: #FFFFFF;
             font-family: inherit;
             color: var(--text-main);
             outline: none;
@@ -389,6 +389,73 @@
             font-weight: 500;
         }
 
+        /* BATTERY LOG TABLE */
+        .battery-log-container {
+            margin-top: 2.5rem;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .battery-log-container h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .battery-log-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 600px;
+        }
+
+        .battery-log-table th,
+        .battery-log-table td {
+            padding: 0.85rem 1rem;
+        }
+
+        .battery-log-table thead {
+            background-color: #E9ECEF;
+            color: var(--text-main);
+        }
+
+        .battery-log-table th {
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .battery-log-table td {
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .battery-log-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .battery-log-table tbody tr:hover {
+            background-color: #F8F9FA;
+        }
+
+        .battery-log-table tbody tr:hover td {
+            color: var(--text-main);
+        }
+
+        .status-charging {
+            color: #48bb78; /* Green for charging */
+            font-weight: 600;
+        }
+
+        .status-standby {
+            color: var(--text-muted);
+        }
+
         /* RESPONSIVE DESIGN */
         @media (max-width: 768px) {
             .dashboard-container {
@@ -435,7 +502,7 @@
         
         <!-- HEADER & STATUS BANNER -->
         <header class="header-section">
-            <h1 class="page-title">System Catu Daya</h1>
+            <h1 class="page-title">Power Supply System</h1>
             <div id="status-banner" class="status-banner aman">
                 <span class="status-label">Status Beban:</span>
                 <span id="val-banner-beban" class="status-value">--</span>
@@ -548,6 +615,25 @@
                 <div class="chart-scroll-wrapper"><div id="chart-hist-arus-bat" class="line-chart-container"></div></div>
                 <div class="chart-scroll-wrapper"><div id="chart-hist-soc" class="line-chart-container"></div></div>
             </div>
+
+            <!-- BATTERY DATA LOG TABLE -->
+            <div class="battery-log-container" id="battery-log-section" style="display: none;">
+                <h3>Log Data Baterai</h3>
+                <table class="battery-log-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Jam</th>
+                            <th>Tegangan Aki (V)</th>
+                            <th>Arus (A)</th>
+                            <th>Status Pengisian</th>
+                        </tr>
+                    </thead>
+                    <tbody id="batteryLogTableBody">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
         </section>
 
     </div>
@@ -560,12 +646,12 @@
         // 1. ECHARTS INITIALIZATION (Realtime Gauges)
         // ------------------------------------------
         
-        const chartTegAc = echarts.init(document.getElementById('gauge-teg-ac'), 'dark');
-        const chartArusAc = echarts.init(document.getElementById('gauge-arus-ac'), 'dark');
-        const chartDayaAc = echarts.init(document.getElementById('gauge-daya-ac'), 'dark');
+        const chartTegAc = echarts.init(document.getElementById('gauge-teg-ac'));
+        const chartArusAc = echarts.init(document.getElementById('gauge-arus-ac'));
+        const chartDayaAc = echarts.init(document.getElementById('gauge-daya-ac'));
         
-        const chartTegBat = echarts.init(document.getElementById('gauge-teg-bat'), 'dark');
-        const chartArusBat = echarts.init(document.getElementById('gauge-arus-bat'), 'dark');
+        const chartTegBat = echarts.init(document.getElementById('gauge-teg-bat'));
+        const chartArusBat = echarts.init(document.getElementById('gauge-arus-bat'));
 
         function createGaugeOption(maxVal, unit, colorStops) {
             return {
@@ -624,13 +710,13 @@
         // 2. ECHARTS INITIALIZATION (History Line Charts)
         // ------------------------------------------
 
-        const histChartTegAc = echarts.init(document.getElementById('chart-hist-teg-ac'), 'dark');
-        const histChartArusAc = echarts.init(document.getElementById('chart-hist-arus-ac'), 'dark');
-        const histChartDayaAc = echarts.init(document.getElementById('chart-hist-daya-ac'), 'dark');
-        const histChartEnergiAc = echarts.init(document.getElementById('chart-hist-energi-ac'), 'dark');
-        const histChartTegBat = echarts.init(document.getElementById('chart-hist-teg-bat'), 'dark');
-        const histChartArusBat = echarts.init(document.getElementById('chart-hist-arus-bat'), 'dark');
-        const histChartSoc = echarts.init(document.getElementById('chart-hist-soc'), 'dark');
+        const histChartTegAc = echarts.init(document.getElementById('chart-hist-teg-ac'));
+        const histChartArusAc = echarts.init(document.getElementById('chart-hist-arus-ac'));
+        const histChartDayaAc = echarts.init(document.getElementById('chart-hist-daya-ac'));
+        const histChartEnergiAc = echarts.init(document.getElementById('chart-hist-energi-ac'));
+        const histChartTegBat = echarts.init(document.getElementById('chart-hist-teg-bat'));
+        const histChartArusBat = echarts.init(document.getElementById('chart-hist-arus-bat'));
+        const histChartSoc = echarts.init(document.getElementById('chart-hist-soc'));
 
         const allHistCharts = [
             histChartTegAc, histChartArusAc, histChartDayaAc, histChartEnergiAc,
@@ -640,7 +726,7 @@
         function createLineOption(title, color, unit) {
             return {
                 backgroundColor: 'transparent',
-                title: { text: title, left: 'center', textStyle: { fontSize: 14, color: '#E0E0E0', fontWeight: 600 } },
+                title: { text: title, left: 'center', textStyle: { fontSize: 14, color: '#333333', fontWeight: 600 } },
                 tooltip: {
                     trigger: 'axis',
                     valueFormatter: (value) => value + ' ' + unit
@@ -804,11 +890,13 @@
                 if (!historyData) {
                     emptyState.style.display = 'block';
                     chartsContainer.style.display = 'none';
+                    document.getElementById('battery-log-section').style.display = 'none';
                     return;
                 }
 
                 emptyState.style.display = 'none';
                 chartsContainer.style.display = 'grid'; // Restore grid view
+                document.getElementById('battery-log-section').style.display = 'block';
 
                 // Create static 24-hour array
                 const hours24 = Array.from({length: 24}, (_, i) => `${i.toString().padStart(2, '0')}:00`);
@@ -821,6 +909,10 @@
                 const dataArusBat = Array(24).fill(null);
                 const dataSoc = Array(24).fill(null);
 
+                const tbody = document.getElementById('batteryLogTableBody');
+                tbody.innerHTML = '';
+                let counter = 1;
+
                 hours24.forEach((hr, index) => {
                     const d = historyData[hr];
                     if (d) {
@@ -831,6 +923,35 @@
                         dataTegBat[index] = d.tegangan_baterai != null ? Number(d.tegangan_baterai) : null;
                         dataArusBat[index] = d.arus_beban_baterai != null ? Number(d.arus_beban_baterai) : null;
                         dataSoc[index] = d.persentase_baterai != null ? Number(d.persentase_baterai) : null;
+
+                        // Populate Table Row
+                        const tr = document.createElement('tr');
+                        const tegBatVal = dataTegBat[index] != null ? dataTegBat[index].toFixed(1) : '--';
+                        const arusBatVal = dataArusBat[index] != null ? dataArusBat[index].toFixed(2) : '--';
+                        
+                        let statusText = "Standby / Discharging";
+                        let statusClass = "status-standby";
+                        
+                        if (d.status_pengisian) {
+                            const st = String(d.status_pengisian).toUpperCase();
+                            if (st === "ON" || st === "1" || st.includes("CHARGING")) {
+                                statusText = "Charging";
+                                statusClass = "status-charging";
+                            } else if (st === "OFF" || st === "0") {
+                                statusText = "Standby / Discharging";
+                            } else {
+                                statusText = d.status_pengisian;
+                            }
+                        }
+
+                        tr.innerHTML = `
+                            <td>${counter++}</td>
+                            <td>${hr}</td>
+                            <td>${tegBatVal}</td>
+                            <td>${arusBatVal}</td>
+                            <td class="${statusClass}">${statusText}</td>
+                        `;
+                        tbody.appendChild(tr);
                     }
                 });
 
