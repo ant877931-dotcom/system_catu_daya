@@ -5,16 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart ATS Dashboard</title>
     
-    <!-- Modern Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Firebase SDK v8 (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-    <!-- Apache ECharts via CDN -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 
     <style>
@@ -181,6 +178,11 @@
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
             flex: 1;
+        }
+        
+        /* Modifikasi untuk menampung 3 gauge */
+        .gauge-grid-3 {
+             grid-template-columns: 1fr 1fr 1fr;
         }
         
         .gauge-wrapper {
@@ -478,7 +480,7 @@
                 font-size: 1.1rem;
                 margin-bottom: 1rem;
             }
-            .gauge-grid {
+            .gauge-grid, .gauge-grid-3 {
                 grid-template-columns: 1fr;
             }
             .history-header-controls {
@@ -500,7 +502,6 @@
 
     <div class="dashboard-container">
         
-        <!-- HEADER & STATUS BANNER -->
         <header class="header-section">
             <h1 class="page-title">Power Supply System</h1>
             <div id="status-banner" class="status-banner aman">
@@ -509,10 +510,8 @@
             </div>
         </header>
 
-        <!-- TOP PANEL -->
         <main class="top-panel">
             
-            <!-- Card 1: Mode & Status -->
             <div class="card">
                 <h2>Mode & Status</h2>
                 <div class="data-row">
@@ -537,7 +536,6 @@
                 </div>
             </div>
 
-            <!-- Card 2: Beban AC (ECharts Gauges) -->
             <div class="card">
                 <h2>Beban AC</h2>
                 <div class="gauge-grid">
@@ -554,7 +552,6 @@
                         <div id="gauge-daya-ac" class="gauge-container"></div>
                     </div>
                     
-                    <!-- Energi AC Displayed as text box inside Grid -->
                     <div class="metric-box">
                         <span class="label">Energi AC</span>
                         <span class="value" id="val-energi-ac">-- <span style="font-size:1rem;">kWh</span></span>
@@ -562,16 +559,19 @@
                 </div>
             </div>
 
-            <!-- Card 3: Baterai DC (ECharts Gauges) -->
-            <div class="card">
+            <div class="card" style="grid-column: span 1;">
                 <h2>Baterai DC</h2>
-                <div class="gauge-grid">
+                <div class="gauge-grid gauge-grid-3">
                     <div class="gauge-wrapper">
                         <div class="chart-label">Tegangan Baterai</div>
                         <div id="gauge-teg-bat" class="gauge-container"></div>
                     </div>
+                     <div class="gauge-wrapper">
+                        <div class="chart-label">Arus Keluar</div>
+                        <div id="gauge-arus-keluar" class="gauge-container"></div>
+                    </div>
                     <div class="gauge-wrapper">
-                        <div class="chart-label">Arus Baterai</div>
+                        <div class="chart-label">Arus Pengisian</div>
                         <div id="gauge-arus-bat" class="gauge-container"></div>
                     </div>
                     
@@ -590,7 +590,6 @@
 
         </main>
 
-        <!-- BOTTOM PANEL (Analitik Berbasis Waktu) -->
         <section class="bottom-panel">
             <div class="history-header-controls">
                 <h2>Analitik Riwayat Harian</h2>
@@ -600,12 +599,10 @@
                 </div>
             </div>
 
-            <!-- Empty State Warning -->
             <div id="history-empty-state" class="empty-state" style="display: none;">
                 Tidak ada data riwayat untuk tanggal ini.
             </div>
 
-            <!-- 7 Line Charts Grid -->
             <div class="line-charts-grid" id="history-charts-container">
                 <div class="chart-scroll-wrapper"><div id="chart-hist-teg-ac" class="line-chart-container"></div></div>
                 <div class="chart-scroll-wrapper"><div id="chart-hist-arus-ac" class="line-chart-container"></div></div>
@@ -616,7 +613,6 @@
                 <div class="chart-scroll-wrapper"><div id="chart-hist-soc" class="line-chart-container"></div></div>
             </div>
 
-            <!-- BATTERY DATA LOG TABLE -->
             <div class="battery-log-container" id="battery-log-section" style="display: none;">
                 <h3>Log Data Baterai</h3>
                 <table class="battery-log-table">
@@ -625,22 +621,19 @@
                             <th>No</th>
                             <th>Jam</th>
                             <th>Tegangan Aki (V)</th>
-                            <th>Arus (A)</th>
+                            <th>Arus Masuk (A)</th>
+                            <th>Arus Keluar (A)</th>
                             <th>Status Pengisian</th>
                         </tr>
                     </thead>
                     <tbody id="batteryLogTableBody">
-                        <!-- Data will be populated here -->
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </section>
 
     </div>
 
-    <!-- ==========================================
-         JAVASCRIPT & FIREBASE LOGIC
-         ========================================== -->
     <script>
         // ------------------------------------------
         // 1. ECHARTS INITIALIZATION (Realtime Gauges)
@@ -652,6 +645,8 @@
         
         const chartTegBat = echarts.init(document.getElementById('gauge-teg-bat'));
         const chartArusBat = echarts.init(document.getElementById('gauge-arus-bat'));
+        // TAMBAHAN BARU: Inisialisasi ECharts untuk Arus Keluar
+        const chartArusKeluar = echarts.init(document.getElementById('gauge-arus-keluar'));
 
         function createGaugeOption(maxVal, unit, colorStops) {
             return {
@@ -704,7 +699,8 @@
         chartArusAc.setOption(createGaugeOption(10, 'A', defaultGradient));
         chartDayaAc.setOption(createGaugeOption(1000, 'W', defaultGradient));
         chartTegBat.setOption(createGaugeOption(15, 'V', defaultGradient));
-        chartArusBat.setOption(createGaugeOption(50, 'A', defaultGradient));
+        chartArusBat.setOption(createGaugeOption(20, 'A', defaultGradient)); // Disesuaikan max 20A untuk charging
+        chartArusKeluar.setOption(createGaugeOption(50, 'A', defaultGradient)); // Sensor ACS758 50A
 
         // ------------------------------------------
         // 2. ECHARTS INITIALIZATION (History Line Charts)
@@ -777,7 +773,7 @@
         // Responsive Resize Handler for ALL charts
         const allCharts = [
             chartTegAc, chartArusAc, chartDayaAc, 
-            chartTegBat, chartArusBat,
+            chartTegBat, chartArusBat, chartArusKeluar,
             ...allHistCharts
         ];
 
@@ -852,11 +848,13 @@
 
             // --- Update Card 3: Baterai DC (Gauges) ---
             const tegBat = data.tegangan_baterai != null ? Number(data.tegangan_baterai) : 0;
-            const arusBat = data.arus_beban_baterai != null ? Number(data.arus_beban_baterai) : 0;
+            const arusBat = data.arus_pengisian != null ? Number(data.arus_pengisian) : 0; // Menggunakan key baru
+            const arusKeluar = data.arus_keluar_baterai != null ? Number(data.arus_keluar_baterai) : 0; // Key untuk ACS758
             const soc = data.persentase_baterai != null ? Number(data.persentase_baterai) : 0;
             
             chartTegBat.setOption({ series: [{ data: [{ value: tegBat.toFixed(1) }] }] });
             chartArusBat.setOption({ series: [{ data: [{ value: arusBat.toFixed(2) }] }] });
+            chartArusKeluar.setOption({ series: [{ data: [{ value: arusKeluar.toFixed(2) }] }] });
             
             // --- Custom Battery DOM Update ---
             const fillEl = document.getElementById('soc-fill');
@@ -921,13 +919,16 @@
                         dataDayaAc[index] = d.daya_ac != null ? Number(d.daya_ac) : null;
                         dataEnergiAc[index] = d.energi_ac != null ? Number(d.energi_ac) : null;
                         dataTegBat[index] = d.tegangan_baterai != null ? Number(d.tegangan_baterai) : null;
-                        dataArusBat[index] = d.arus_beban_baterai != null ? Number(d.arus_beban_baterai) : null;
+                        dataArusBat[index] = d.arus_pengisian != null ? Number(d.arus_pengisian) : null;
                         dataSoc[index] = d.persentase_baterai != null ? Number(d.persentase_baterai) : null;
+                        
+                        const arusKeluar = d.arus_keluar_baterai != null ? Number(d.arus_keluar_baterai) : null;
 
                         // Populate Table Row
                         const tr = document.createElement('tr');
                         const tegBatVal = dataTegBat[index] != null ? dataTegBat[index].toFixed(1) : '--';
-                        const arusBatVal = dataArusBat[index] != null ? dataArusBat[index].toFixed(2) : '--';
+                        const arusMasukVal = dataArusBat[index] != null ? dataArusBat[index].toFixed(2) : '--';
+                        const arusKeluarVal = arusKeluar != null ? arusKeluar.toFixed(2) : '--';
                         
                         let statusText = "Standby / Discharging";
                         let statusClass = "status-standby";
@@ -948,7 +949,8 @@
                             <td>${counter++}</td>
                             <td>${hr}</td>
                             <td>${tegBatVal}</td>
-                            <td>${arusBatVal}</td>
+                            <td>${arusMasukVal}</td>
+                            <td>${arusKeluarVal}</td>
                             <td class="${statusClass}">${statusText}</td>
                         `;
                         tbody.appendChild(tr);
