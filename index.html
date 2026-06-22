@@ -180,11 +180,6 @@
             flex: 1;
         }
         
-        /* Modifikasi untuk menampung 3 gauge */
-        .gauge-grid-3 {
-             grid-template-columns: 1fr 1fr 1fr;
-        }
-        
         .gauge-wrapper {
             display: flex;
             flex-direction: column;
@@ -250,6 +245,7 @@
             justify-content: center;
             margin-bottom: 0.5rem;
             width: 100%;
+            transform: scale(0.85); /* Dikecilkan agar muat rapi di grid 2x2 */
         }
 
         .battery-body {
@@ -480,7 +476,7 @@
                 font-size: 1.1rem;
                 margin-bottom: 1rem;
             }
-            .gauge-grid, .gauge-grid-3 {
+            .gauge-grid {
                 grid-template-columns: 1fr;
             }
             .history-header-controls {
@@ -559,23 +555,24 @@
                 </div>
             </div>
 
-            <div class="card" style="grid-column: span 1;">
+            <div class="card">
                 <h2>Baterai DC</h2>
-                <div class="gauge-grid gauge-grid-3">
+                <div class="gauge-grid">
                     <div class="gauge-wrapper">
                         <div class="chart-label">Tegangan Baterai</div>
                         <div id="gauge-teg-bat" class="gauge-container"></div>
                     </div>
-                     <div class="gauge-wrapper">
+                    <div class="gauge-wrapper">
                         <div class="chart-label">Arus Keluar</div>
                         <div id="gauge-arus-keluar" class="gauge-container"></div>
                     </div>
+                    
                     <div class="gauge-wrapper">
                         <div class="chart-label">Arus Pengisian</div>
                         <div id="gauge-arus-bat" class="gauge-container"></div>
                     </div>
                     
-                    <div class="battery-wrapper metric-box" style="grid-column: 1 / -1; margin-top: 1rem;">
+                    <div class="battery-wrapper metric-box">
                         <span class="label" style="text-align: center;">SOC Baterai</span>
                         <div class="battery-graphic">
                             <div class="battery-body">
@@ -645,7 +642,6 @@
         
         const chartTegBat = echarts.init(document.getElementById('gauge-teg-bat'));
         const chartArusBat = echarts.init(document.getElementById('gauge-arus-bat'));
-        // TAMBAHAN BARU: Inisialisasi ECharts untuk Arus Keluar
         const chartArusKeluar = echarts.init(document.getElementById('gauge-arus-keluar'));
 
         function createGaugeOption(maxVal, unit, colorStops) {
@@ -699,8 +695,8 @@
         chartArusAc.setOption(createGaugeOption(10, 'A', defaultGradient));
         chartDayaAc.setOption(createGaugeOption(1000, 'W', defaultGradient));
         chartTegBat.setOption(createGaugeOption(15, 'V', defaultGradient));
-        chartArusBat.setOption(createGaugeOption(20, 'A', defaultGradient)); // Disesuaikan max 20A untuk charging
-        chartArusKeluar.setOption(createGaugeOption(50, 'A', defaultGradient)); // Sensor ACS758 50A
+        chartArusBat.setOption(createGaugeOption(20, 'A', defaultGradient)); 
+        chartArusKeluar.setOption(createGaugeOption(50, 'A', defaultGradient)); 
 
         // ------------------------------------------
         // 2. ECHARTS INITIALIZATION (History Line Charts)
@@ -731,7 +727,7 @@
                 xAxis: {
                     type: 'category',
                     boundaryGap: false,
-                    data: [], // Will be populated with hours
+                    data: [], 
                     axisLine: { lineStyle: { color: '#cbd5e0' } },
                     axisLabel: { color: '#718096' }
                 },
@@ -754,7 +750,7 @@
                             ]),
                             opacity: 0.2
                         },
-                        data: [] // Will be populated with values
+                        data: [] 
                     }
                 ]
             };
@@ -848,8 +844,8 @@
 
             // --- Update Card 3: Baterai DC (Gauges) ---
             const tegBat = data.tegangan_baterai != null ? Number(data.tegangan_baterai) : 0;
-            const arusBat = data.arus_pengisian != null ? Number(data.arus_pengisian) : 0; // Menggunakan key baru
-            const arusKeluar = data.arus_keluar_baterai != null ? Number(data.arus_keluar_baterai) : 0; // Key untuk ACS758
+            const arusBat = data.arus_pengisian != null ? Number(data.arus_pengisian) : 0;
+            const arusKeluar = data.arus_keluar_baterai != null ? Number(data.arus_keluar_baterai) : 0;
             const soc = data.persentase_baterai != null ? Number(data.persentase_baterai) : 0;
             
             chartTegBat.setOption({ series: [{ data: [{ value: tegBat.toFixed(1) }] }] });
@@ -893,10 +889,9 @@
                 }
 
                 emptyState.style.display = 'none';
-                chartsContainer.style.display = 'grid'; // Restore grid view
+                chartsContainer.style.display = 'grid'; 
                 document.getElementById('battery-log-section').style.display = 'block';
 
-                // Create static 24-hour array
                 const hours24 = Array.from({length: 24}, (_, i) => `${i.toString().padStart(2, '0')}:00`);
                 
                 const dataTegAc = Array(24).fill(null);
@@ -924,7 +919,6 @@
                         
                         const arusKeluar = d.arus_keluar_baterai != null ? Number(d.arus_keluar_baterai) : null;
 
-                        // Populate Table Row
                         const tr = document.createElement('tr');
                         const tegBatVal = dataTegBat[index] != null ? dataTegBat[index].toFixed(1) : '--';
                         const arusMasukVal = dataArusBat[index] != null ? dataArusBat[index].toFixed(2) : '--';
@@ -957,7 +951,6 @@
                     }
                 });
 
-                // Update all charts via setOption
                 histChartTegAc.setOption({ xAxis: { data: hours24 }, series: [{ data: dataTegAc }] });
                 histChartArusAc.setOption({ xAxis: { data: hours24 }, series: [{ data: dataArusAc }] });
                 histChartDayaAc.setOption({ xAxis: { data: hours24 }, series: [{ data: dataDayaAc }] });
@@ -971,18 +964,13 @@
             });
         }
 
-        // Initialize Date Picker & Button Listener
         const datePicker = document.getElementById('history-date-picker');
         const btnLoad = document.getElementById('btn-load-history');
         
-        // Set default value to today
         const todayStr = new Date().toISOString().split('T')[0];
         datePicker.value = todayStr;
-        
-        // Load default data (today) immediately on page load
         loadHistoricalData(todayStr);
 
-        // Click Event Listener
         btnLoad.addEventListener('click', () => {
             const selected = datePicker.value;
             if (selected) {
