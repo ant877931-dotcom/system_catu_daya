@@ -696,7 +696,8 @@
         chartDayaAc.setOption(createGaugeOption(1000, 'W', defaultGradient));
         chartTegBat.setOption(createGaugeOption(15, 'V', defaultGradient));
         chartArusBat.setOption(createGaugeOption(20, 'A', defaultGradient)); 
-        chartArusKeluar.setOption(createGaugeOption(150, 'A', defaultGradient)); 
+        // Skala jarum speedometer diubah menjadi 200 A
+        chartArusKeluar.setOption(createGaugeOption(200, 'A', defaultGradient));
 
         // ------------------------------------------
         // 2. ECHARTS INITIALIZATION (History Line Charts)
