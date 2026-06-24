@@ -23,17 +23,14 @@
             --card-bg: #FFFFFF;
             --text-main: #333333;
             --text-muted: #666666;
-            
             --primary: #3182ce;
             --primary-bg: #1A365D;
             --success: #38a169;
             --danger: #e53e3e;
             --warning: #dd6b20;
-            
             --border-color: #E0E0E0;
             --radius-md: 0.75rem;
             --radius-lg: 1.25rem;
-            
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
             --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
@@ -81,7 +78,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 0.75rem;
             padding: 1.5rem;
             border-radius: var(--radius-lg);
             color: white;
@@ -89,19 +85,12 @@
             font-weight: 700;
             text-transform: uppercase;
             box-shadow: var(--shadow-md);
-            transition: background-color 0.4s ease, box-shadow 0.4s ease;
+            transition: background-color 0.4s ease;
             text-align: center;
         }
 
-        .status-banner.aman {
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-        }
-
-        .status-banner.warning {
-            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
-            box-shadow: 0 4px 15px rgba(221, 107, 32, 0.4);
-        }
-
+        .status-banner.aman { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); }
+        .status-banner.warning { background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%); }
         .status-banner.overload {
             background: linear-gradient(135deg, #fc8181 0%, #e53e3e 100%);
             animation: pulse-danger 2s infinite;
@@ -118,7 +107,6 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 1.5rem;
-            align-items: stretch;
         }
 
         .card {
@@ -159,18 +147,8 @@
             padding-bottom: 0;
         }
 
-        .data-label {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-
-        .data-value {
-            font-weight: 600;
-            font-size: 1.05rem;
-            color: var(--text-main);
-        }
-
+        .data-label { color: var(--text-muted); font-size: 0.95rem; font-weight: 500; }
+        .data-value { font-weight: 600; font-size: 1.05rem; color: var(--text-main); }
         .data-value.highlight {
             color: var(--primary);
             background-color: #EBF8FF;
@@ -179,33 +157,10 @@
         }
 
         /* GAUGE & ECHARTS GRID */
-        .gauge-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            flex: 1;
-        }
-        
-        .gauge-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-
-        .chart-label {
-            text-align: center;
-            color: var(--text-main);
-            font-weight: 600;
-            font-size: 0.95rem;
-            margin-bottom: -15px; 
-            z-index: 10;
-        }
-
-        .gauge-container {
-            width: 100%;
-            height: 160px;
-        }
+        .gauge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; flex: 1; }
+        .gauge-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        .chart-label { text-align: center; color: var(--text-main); font-weight: 600; font-size: 0.95rem; margin-bottom: -15px; z-index: 10; }
+        .gauge-container { width: 100%; height: 160px; }
 
         .metric-box {
             display: flex;
@@ -218,245 +173,47 @@
             height: 100%;
             min-height: 160px;
         }
-
-        .metric-box .label {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
-        }
-
-        .metric-box .value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
+        .metric-box .label { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .metric-box .value { font-size: 1.75rem; font-weight: 700; color: var(--primary); }
 
         /* BATTERY ANIMATION */
-        .battery-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-        }
-
-        .battery-graphic {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 0.5rem;
-            width: 100%;
-        }
-
+        .battery-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
+        .battery-graphic { display: flex; flex-direction: row; align-items: center; justify-content: center; margin-bottom: 0.5rem; width: 100%; max-width: 250px; }
         .battery-body {
-            width: 100%;
-            max-width: 250px;
-            height: 60px;
-            border: 4px solid var(--text-main);
-            border-radius: 8px;
-            position: relative;
-            overflow: hidden;
-            background: var(--bg-color);
+            width: 100%; height: 60px; border: 4px solid var(--text-main);
+            border-radius: 8px; position: relative; overflow: hidden; background: var(--bg-color);
         }
-
-        .battery-nub {
-            width: 8px;
-            height: 24px;
-            background-color: var(--text-main);
-            border-top-right-radius: 6px;
-            border-bottom-right-radius: 6px;
-        }
-
-        .battery-fill {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 100%;
-            background-color: #dc3545;
-            transition: width 0.5s ease-in-out, background-color 0.5s ease;
-        }
+        .battery-nub { width: 8px; height: 24px; background-color: var(--text-main); border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
+        .battery-fill { position: absolute; top: 0; left: 0; width: 0%; height: 100%; transition: width 0.5s ease-in-out, background-color 0.5s ease; }
 
         /* BOTTOM PANEL (HISTORY CHARTS) */
-        .bottom-panel {
-            background-color: var(--card-bg);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
-        }
-
-        .history-header-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 2px solid var(--bg-color);
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .history-header-controls h2 {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-main);
-        }
-
-        .date-controls {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-        }
-
-        .date-input {
-            padding: 0.6rem 1rem;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
-            background-color: #FFFFFF;
-            font-family: inherit;
-            color: var(--text-main);
-            outline: none;
-            font-weight: 500;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.6rem 1.25rem;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.1s ease;
-            font-family: inherit;
-        }
-
-        .btn-primary:hover {
-            background-color: #2b6cb0;
-        }
+        .bottom-panel { background-color: var(--card-bg); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); }
+        .history-header-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-color); flex-wrap: wrap; gap: 1rem; }
+        .history-header-controls h2 { margin-bottom: 0; padding-bottom: 0; border-bottom: none; font-size: 1.25rem; font-weight: 600; }
+        .date-controls { display: flex; gap: 0.75rem; align-items: center; }
+        .date-input { padding: 0.6rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); font-family: inherit; font-weight: 500; }
+        .btn-primary { background-color: var(--primary); color: white; border: none; padding: 0.6rem 1.25rem; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; }
         
-        .btn-primary:active {
-            transform: scale(0.97);
-        }
-
-        .line-charts-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-        }
-
-        .chart-scroll-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 10px;
-        }
-
-        .line-chart-container {
-            width: 100%;
-            min-width: 800px;
-            height: 350px;
-            background: transparent;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-color);
-            padding: 1rem;
-            transition: box-shadow 0.2s ease;
-        }
-
-        .line-chart-container:hover {
-            box-shadow: var(--shadow-md);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem 0;
-            color: var(--text-muted);
-            font-style: italic;
-            background: var(--bg-color);
-            border-radius: var(--radius-md);
-            font-weight: 500;
-        }
+        .line-charts-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+        .chart-scroll-wrapper { width: 100%; overflow-x: auto; padding-bottom: 10px; }
+        .line-chart-container { width: 100%; min-width: 800px; height: 350px; background: transparent; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1rem; }
+        .empty-state { text-align: center; padding: 3rem 0; color: var(--text-muted); font-style: italic; background: var(--bg-color); border-radius: var(--radius-md); }
 
         /* BATTERY LOG TABLE */
-        .battery-log-container {
-            margin-top: 2.5rem;
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .battery-log-container h3 {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .battery-log-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            min-width: 600px;
-        }
-
-        .battery-log-table th,
-        .battery-log-table td {
-            padding: 0.85rem 1rem;
-        }
-
-        .battery-log-table thead {
-            background-color: #E9ECEF;
-            color: var(--text-main);
-        }
-
-        .battery-log-table th {
-            font-weight: 600;
-            font-size: 0.95rem;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .battery-log-table td {
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.95rem;
-            color: var(--text-muted);
-        }
-
-        .battery-log-table tbody tr {
-            transition: background-color 0.2s ease;
-        }
-
-        .battery-log-table tbody tr:hover {
-            background-color: #F8F9FA;
-        }
-
-        .battery-log-table tbody tr:hover td {
-            color: var(--text-main);
-        }
-
-        .status-charging {
-            color: #48bb78; 
-            font-weight: 600;
-        }
-
-        .status-standby {
-            color: var(--text-muted);
-        }
+        .battery-log-container { margin-top: 2.5rem; width: 100%; overflow-x: auto; }
+        .battery-log-container h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
+        .battery-log-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px; }
+        .battery-log-table th, .battery-log-table td { padding: 0.85rem 1rem; }
+        .battery-log-table thead { background-color: #E9ECEF; color: var(--text-main); }
+        .battery-log-table th { font-weight: 600; font-size: 0.95rem; border-bottom: 2px solid var(--border-color); }
+        .battery-log-table td { border-bottom: 1px solid var(--border-color); font-size: 0.95rem; color: var(--text-muted); }
+        .battery-log-table tbody tr:hover { background-color: #F8F9FA; }
+        .status-charging { color: #48bb78; font-weight: 600; }
+        .status-standby { color: var(--text-muted); }
 
         /* RESPONSIVE DESIGN */
         @media (max-width: 768px) {
             .dashboard-container { padding: 1rem; }
-            .page-title { font-size: 1.5rem; }
-            .status-banner { font-size: 1.1rem; padding: 1rem; }
             .top-panel { grid-template-columns: 1fr; }
             .gauge-grid { grid-template-columns: 1fr; }
             .history-header-controls { flex-direction: column; align-items: flex-start; }
@@ -480,43 +237,19 @@
             
             <div class="card">
                 <h2>Mode & Status</h2>
-                <div class="data-row">
-                    <span class="data-label">Status PLN</span>
-                    <span class="data-value" id="val-pln">--</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Status Inverter</span>
-                    <span class="data-value" id="val-inverter">--</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Status Pengisian</span>
-                    <span class="data-value" id="val-pengisian">--</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Mode Sistem</span>
-                    <span class="data-value highlight" id="val-mode">--</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Status Beban</span>
-                    <span class="data-value" id="val-status-beban">--</span>
-                </div>
+                <div class="data-row"><span class="data-label">Status PLN</span><span class="data-value" id="val-pln">--</span></div>
+                <div class="data-row"><span class="data-label">Status Inverter</span><span class="data-value" id="val-inverter">--</span></div>
+                <div class="data-row"><span class="data-label">Status Pengisian</span><span class="data-value" id="val-pengisian">--</span></div>
+                <div class="data-row"><span class="data-label">Mode Sistem</span><span class="data-value highlight" id="val-mode">--</span></div>
+                <div class="data-row"><span class="data-label">Status Beban</span><span class="data-value" id="val-status-beban">--</span></div>
             </div>
 
             <div class="card">
                 <h2>Beban AC</h2>
                 <div class="gauge-grid">
-                    <div class="gauge-wrapper">
-                        <div class="chart-label">Tegangan AC</div>
-                        <div id="gauge-teg-ac" class="gauge-container"></div>
-                    </div>
-                    <div class="gauge-wrapper">
-                        <div class="chart-label">Arus AC</div>
-                        <div id="gauge-arus-ac" class="gauge-container"></div>
-                    </div>
-                    <div class="gauge-wrapper">
-                        <div class="chart-label">Daya AC</div>
-                        <div id="gauge-daya-ac" class="gauge-container"></div>
-                    </div>
+                    <div class="gauge-wrapper"><div class="chart-label">Tegangan AC</div><div id="gauge-teg-ac" class="gauge-container"></div></div>
+                    <div class="gauge-wrapper"><div class="chart-label">Arus AC</div><div id="gauge-arus-ac" class="gauge-container"></div></div>
+                    <div class="gauge-wrapper"><div class="chart-label">Daya AC</div><div id="gauge-daya-ac" class="gauge-container"></div></div>
                     
                     <div class="metric-box">
                         <span class="label">Energi AC</span>
@@ -528,24 +261,14 @@
             <div class="card">
                 <h2>Baterai DC</h2>
                 <div class="gauge-grid">
-                    <div class="gauge-wrapper">
-                        <div class="chart-label">Tegangan Baterai</div>
-                        <div id="gauge-teg-bat" class="gauge-container"></div>
-                    </div>
-                    <div class="gauge-wrapper" style="display:none;">
-                        <div id="gauge-arus-keluar" class="gauge-container"></div>
-                    </div>
-                    <div class="gauge-wrapper" style="grid-column: 2;">
-                        <div class="chart-label">Arus Pengisian</div>
-                        <div id="gauge-arus-bat" class="gauge-container"></div>
-                    </div>
+                    <div class="gauge-wrapper"><div class="chart-label">Tegangan Baterai</div><div id="gauge-teg-bat" class="gauge-container"></div></div>
+                    <div class="gauge-wrapper"><div class="chart-label">Arus Keluar</div><div id="gauge-arus-keluar" class="gauge-container"></div></div>
+                    <div class="gauge-wrapper"><div class="chart-label">Arus Pengisian</div><div id="gauge-arus-bat" class="gauge-container"></div></div>
                     
                     <div class="battery-wrapper metric-box" style="grid-column: 1 / -1; margin-top: 1rem;">
                         <span class="label" style="text-align: center;">SOC Baterai</span>
                         <div class="battery-graphic">
-                            <div class="battery-body">
-                                <div class="battery-fill" id="soc-fill"></div>
-                            </div>
+                            <div class="battery-body"><div class="battery-fill" id="soc-fill"></div></div>
                             <div class="battery-nub"></div>
                         </div>
                         <div class="battery-text value" id="soc-text" style="font-size:1.75rem; text-align: center;">0 %</div>
@@ -574,6 +297,7 @@
                 <div class="chart-scroll-wrapper"><div id="chart-hist-daya-ac" class="line-chart-container"></div></div>
                 <div class="chart-scroll-wrapper"><div id="chart-hist-energi-ac" class="line-chart-container"></div></div>
                 <div class="chart-scroll-wrapper"><div id="chart-hist-teg-bat" class="line-chart-container"></div></div>
+                <div class="chart-scroll-wrapper"><div id="chart-hist-arus-bat" class="line-chart-container"></div></div>
                 <div class="chart-scroll-wrapper"><div id="chart-hist-soc" class="line-chart-container"></div></div>
             </div>
 
@@ -601,11 +325,9 @@
         // ------------------------------------------
         // 1. ECHARTS INITIALIZATION (Realtime Gauges)
         // ------------------------------------------
-        
         const chartTegAc = echarts.init(document.getElementById('gauge-teg-ac'));
         const chartArusAc = echarts.init(document.getElementById('gauge-arus-ac'));
         const chartDayaAc = echarts.init(document.getElementById('gauge-daya-ac'));
-        
         const chartTegBat = echarts.init(document.getElementById('gauge-teg-bat'));
         const chartArusBat = echarts.init(document.getElementById('gauge-arus-bat'));
         const chartArusKeluar = echarts.init(document.getElementById('gauge-arus-keluar'));
@@ -614,49 +336,18 @@
             return {
                 backgroundColor: 'transparent',
                 series: [{
-                    type: 'gauge',
-                    startAngle: 180,
-                    endAngle: 0,
-                    center: ['50%', '75%'],
-                    radius: '100%',
-                    min: 0,
-                    max: maxVal,
-                    splitNumber: 5,
-                    axisLine: {
-                        lineStyle: {
-                            width: 10,
-                            color: colorStops || [
-                                [0.3, '#48bb78'],
-                                [0.7, '#ecc94b'],
-                                [1, '#e53e3e']
-                            ]
-                        }
-                    },
-                    pointer: {
-                        icon: 'path://M12.8,0.7l12,40.1H0.7L12.8,0.7z',
-                        length: '55%',
-                        width: 6,
-                        offsetCenter: [0, '-10%'],
-                        itemStyle: { color: 'inherit' }
-                    },
-                    axisTick: { length: 6, lineStyle: { color: 'inherit', width: 1 } },
-                    splitLine: { length: 10, lineStyle: { color: 'inherit', width: 2 } },
+                    type: 'gauge', startAngle: 180, endAngle: 0, center: ['50%', '75%'], radius: '100%', min: 0, max: maxVal, splitNumber: 5,
+                    axisLine: { lineStyle: { width: 10, color: colorStops || [[0.3, '#48bb78'], [0.7, '#ecc94b'], [1, '#e53e3e']] } },
+                    pointer: { length: '55%', width: 6, offsetCenter: [0, '-10%'], itemStyle: { color: 'inherit' } },
+                    axisTick: { length: 6, lineStyle: { color: 'inherit' } }, splitLine: { length: 10, lineStyle: { color: 'inherit', width: 2 } },
                     axisLabel: { color: '#718096', fontSize: 10, distance: 12 },
-                    detail: {
-                        fontSize: 16,
-                        offsetCenter: [0, '25%'],
-                        valueAnimation: true,
-                        formatter: '{value} ' + unit,
-                        color: 'inherit',
-                        fontWeight: 'bold'
-                    },
+                    detail: { fontSize: 16, offsetCenter: [0, '25%'], valueAnimation: true, formatter: '{value} ' + unit, color: 'inherit', fontWeight: 'bold' },
                     data: [{ value: 0 }]
                 }]
             };
         }
 
         const defaultGradient = [[0.3, '#48bb78'], [0.7, '#ecc94b'], [1, '#e53e3e']];
-
         chartTegAc.setOption(createGaugeOption(300, 'V', defaultGradient));
         chartArusAc.setOption(createGaugeOption(10, 'A', defaultGradient));
         chartDayaAc.setOption(createGaugeOption(1000, 'W', defaultGradient));
@@ -667,57 +358,32 @@
         // ------------------------------------------
         // 2. ECHARTS INITIALIZATION (History Line Charts)
         // ------------------------------------------
-
         const histChartTegAc = echarts.init(document.getElementById('chart-hist-teg-ac'));
         const histChartArusAc = echarts.init(document.getElementById('chart-hist-arus-ac'));
         const histChartDayaAc = echarts.init(document.getElementById('chart-hist-daya-ac'));
         const histChartEnergiAc = echarts.init(document.getElementById('chart-hist-energi-ac'));
         const histChartTegBat = echarts.init(document.getElementById('chart-hist-teg-bat'));
+        const histChartArusBat = echarts.init(document.getElementById('chart-hist-arus-bat'));
         const histChartSoc = echarts.init(document.getElementById('chart-hist-soc'));
 
-        const allHistCharts = [
-            histChartTegAc, histChartArusAc, histChartDayaAc, histChartEnergiAc,
-            histChartTegBat, histChartSoc
-        ];
+        const allHistCharts = [histChartTegAc, histChartArusAc, histChartDayaAc, histChartEnergiAc, histChartTegBat, histChartArusBat, histChartSoc];
 
         function createLineOption(title, color, unit) {
             return {
                 backgroundColor: 'transparent',
                 title: { text: title, left: 'center', textStyle: { fontSize: 14, color: '#333333', fontWeight: 600 } },
-                tooltip: {
-                    trigger: 'axis',
-                    valueFormatter: (value) => value + ' ' + unit
-                },
+                tooltip: { trigger: 'axis', valueFormatter: (value) => value + ' ' + unit },
                 grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-                xAxis: {
-                    type: 'category',
-                    boundaryGap: false,
-                    data: [],
-                    axisLine: { lineStyle: { color: '#cbd5e0' } },
-                    axisLabel: { color: '#718096' }
-                },
-                yAxis: { 
-                    type: 'value',
-                    splitLine: { lineStyle: { color: '#edf2f7', type: 'dashed' } },
-                    axisLabel: { color: '#718096' }
-                },
-                series: [
-                    {
-                        name: title,
-                        type: 'line',
-                        smooth: true,
-                        itemStyle: { color: color },
-                        lineStyle: { width: 3 },
-                        areaStyle: {
-                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                                { offset: 0, color: color }, 
-                                { offset: 1, color: '#ffffff' }  
-                            ]),
-                            opacity: 0.2
-                        },
-                        data: []
-                    }
-                ]
+                xAxis: { type: 'category', boundaryGap: false, data: [], axisLine: { lineStyle: { color: '#cbd5e0' } }, axisLabel: { color: '#718096' } },
+                yAxis: { type: 'value', splitLine: { lineStyle: { color: '#edf2f7', type: 'dashed' } }, axisLabel: { color: '#718096' } },
+                series: [{
+                    name: title, type: 'line', smooth: true, itemStyle: { color: color }, lineStyle: { width: 3 },
+                    areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: color }, { offset: 1, color: '#ffffff' }]),
+                        opacity: 0.2
+                    },
+                    data: []
+                }]
             };
         }
 
@@ -726,23 +392,11 @@
         histChartDayaAc.setOption(createLineOption('Daya AC', '#e53e3e', 'W'));
         histChartEnergiAc.setOption(createLineOption('Energi AC', '#805ad5', 'kWh'));
         histChartTegBat.setOption(createLineOption('Tegangan Baterai', '#3182ce', 'V'));
+        histChartArusBat.setOption(createLineOption('Arus Baterai/Pengisian', '#dd6b20', 'A'));
         histChartSoc.setOption(createLineOption('SOC Baterai', '#38a169', '%'));
 
-
-        // Responsive Resize Handler
-        const allCharts = [
-            chartTegAc, chartArusAc, chartDayaAc, 
-            chartTegBat, chartArusBat, chartArusKeluar,
-            ...allHistCharts
-        ];
-
-        window.addEventListener('resize', function() {
-            allCharts.forEach(chart => {
-                if (chart) {
-                    chart.resize();
-                }
-            });
-        });
+        const allCharts = [chartTegAc, chartArusAc, chartDayaAc, chartTegBat, chartArusBat, chartArusKeluar, ...allHistCharts];
+        window.addEventListener('resize', function() { allCharts.forEach(chart => { if (chart) chart.resize(); }); });
 
         // ------------------------------------------
         // 3. FIREBASE CONFIGURATION
@@ -754,33 +408,26 @@
             projectId: "ats-system-9640b",
             storageBucket: "ats-system-9640b.firebasestorage.app",
             messagingSenderId: "742975280398",
-            appId: "1:742975280398:web:ece278220fafe180e6b35f",
-            measurementId: "G-Y4XFY1Q180"
+            appId: "1:742975280398:web:ece278220fafe180e6b35f"
         };
 
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
-
         const formatNum = (val, dec = 1) => val != null ? Number(val).toFixed(dec) : '--';
         const formatStr = (val) => val || '--';
 
         // ------------------------------------------
         // 4. REALTIME LISTENER (/SmartATS/Realtime)
         // ------------------------------------------
-        const realtimeRef = db.ref('/SmartATS/Realtime');
-
-        realtimeRef.on('value', (snapshot) => {
+        db.ref('/SmartATS/Realtime').on('value', (snapshot) => {
             const data = snapshot.val();
             if (!data) return;
 
-            // --- Update Top Banner Logic ---
+            // Update Top Banner
             const statusBebanStr = formatStr(data.status_beban);
             const elBanner = document.getElementById('status-banner');
             document.getElementById('val-banner-beban').textContent = statusBebanStr;
             
-            // Dynamic styling based on the string received from ESP32
             if (statusBebanStr.includes("MATI") || statusBebanStr.includes("OVERLOAD") || statusBebanStr.includes("CRITICAL")) {
                 elBanner.className = 'status-banner overload';
             } else if (statusBebanStr.includes("PENDING")) {
@@ -789,83 +436,55 @@
                 elBanner.className = 'status-banner aman';
             }
 
-            // --- Update Card 1: Mode & Status ---
+            // Update Data Card
             document.getElementById('val-pln').textContent = formatStr(data.status_pln);
             document.getElementById('val-inverter').textContent = formatStr(data.status_inverter);
             document.getElementById('val-pengisian').textContent = formatStr(data.status_pengisian);
             document.getElementById('val-mode').textContent = formatStr(data.mode_sistem);
             document.getElementById('val-status-beban').textContent = statusBebanStr;
 
-            // --- Update Card 2: Beban AC (Gauges) ---
-            const tegAc = data.tegangan_ac != null ? Number(data.tegangan_ac) : 0;
-            const arusAc = data.arus_ac != null ? Number(data.arus_ac) : 0;
-            const dayaAcRaw = data.daya_ac != null ? Number(data.daya_ac) : 0;
-            
-            chartTegAc.setOption({ series: [{ data: [{ value: tegAc.toFixed(1) }] }] });
-            chartArusAc.setOption({ series: [{ data: [{ value: arusAc.toFixed(2) }] }] });
-            chartDayaAc.setOption({ series: [{ data: [{ value: dayaAcRaw.toFixed(1) }] }] });
-            
+            // Update Gauges
+            chartTegAc.setOption({ series: [{ data: [{ value: Number(data.tegangan_ac || 0).toFixed(1) }] }] });
+            chartArusAc.setOption({ series: [{ data: [{ value: Number(data.arus_ac || 0).toFixed(2) }] }] });
+            chartDayaAc.setOption({ series: [{ data: [{ value: Number(data.daya_ac || 0).toFixed(1) }] }] });
             document.getElementById('val-energi-ac').innerHTML = `${formatNum(data.energi_ac, 2)} <span style="font-size:1rem;">kWh</span>`;
 
-            // --- Update Card 3: Baterai DC (Gauges) ---
-            const tegBat = data.tegangan_baterai != null ? Number(data.tegangan_baterai) : 0;
-            const arusBat = data.arus_pengisian != null ? Number(data.arus_pengisian) : 0;
-            const arusKeluar = data.arus_keluar_baterai != null ? Number(data.arus_keluar_baterai) : 0;
-            const soc = data.persentase_baterai != null ? Number(data.persentase_baterai) : 0;
+            chartTegBat.setOption({ series: [{ data: [{ value: Number(data.tegangan_baterai || 0).toFixed(1) }] }] });
+            chartArusBat.setOption({ series: [{ data: [{ value: Number(data.arus_pengisian || 0).toFixed(2) }] }] });
+            chartArusKeluar.setOption({ series: [{ data: [{ value: Number(data.arus_keluar_baterai || 0).toFixed(2) }] }] });
             
-            chartTegBat.setOption({ series: [{ data: [{ value: tegBat.toFixed(1) }] }] });
-            chartArusBat.setOption({ series: [{ data: [{ value: arusBat.toFixed(2) }] }] });
-            chartArusKeluar.setOption({ series: [{ data: [{ value: arusKeluar.toFixed(2) }] }] });
-            
-            // --- Custom Battery DOM Update ---
+            // Battery SOC Graphic
+            const soc = Number(data.persentase_baterai || 0);
             const fillEl = document.getElementById('soc-fill');
             const textEl = document.getElementById('soc-text');
-            
             if (fillEl && textEl) {
                 textEl.innerText = soc.toFixed(0) + " %";
                 fillEl.style.width = soc.toFixed(0) + "%";
-                
-                if (soc > 50) {
-                    fillEl.style.backgroundColor = '#28a745'; // Green
-                } else if (soc > 20 && soc <= 50) {
-                    fillEl.style.backgroundColor = '#ffc107'; // Yellow/Orange
-                } else {
-                    fillEl.style.backgroundColor = '#dc3545'; // Red
-                }
+                if (soc > 50) fillEl.style.backgroundColor = '#28a745';
+                else if (soc > 20) fillEl.style.backgroundColor = '#ffc107';
+                else fillEl.style.backgroundColor = '#dc3545';
             }
         });
 
         // ------------------------------------------
         // 5. HISTORY DATA LOAD LOGIC
         // ------------------------------------------
-        
         function loadHistoricalData(selectedDate) {
-            const emptyState = document.getElementById('history-empty-state');
-            const chartsContainer = document.getElementById('history-charts-container');
-
             db.ref(`/SmartATS/History/${selectedDate}`).once('value').then(snapshot => {
                 const historyData = snapshot.val();
-                
                 if (!historyData) {
-                    emptyState.style.display = 'block';
-                    chartsContainer.style.display = 'none';
+                    document.getElementById('history-empty-state').style.display = 'block';
+                    document.getElementById('history-charts-container').style.display = 'none';
                     document.getElementById('battery-log-section').style.display = 'none';
                     return;
                 }
 
-                emptyState.style.display = 'none';
-                chartsContainer.style.display = 'grid'; 
+                document.getElementById('history-empty-state').style.display = 'none';
+                document.getElementById('history-charts-container').style.display = 'grid'; 
                 document.getElementById('battery-log-section').style.display = 'block';
 
                 const timeKeys = Object.keys(historyData).sort();
-                
-                const dataTegAc = [];
-                const dataArusAc = [];
-                const dataDayaAc = [];
-                const dataEnergiAc = [];
-                const dataTegBat = [];
-                const dataSoc = [];
-
+                const dataTegAc = [], dataArusAc = [], dataDayaAc = [], dataEnergiAc = [], dataTegBat = [], dataArusBat = [], dataSoc = [];
                 const tbody = document.getElementById('batteryLogTableBody');
                 tbody.innerHTML = '';
                 let counter = 1;
@@ -878,31 +497,34 @@
                     dataDayaAc.push(d.daya_ac != null ? Number(d.daya_ac) : null);
                     dataEnergiAc.push(d.energi_ac != null ? Number(d.energi_ac) : null);
                     dataTegBat.push(d.tegangan_baterai != null ? Number(d.tegangan_baterai) : null);
+                    
+                    const arusMasukVal = d.arus_pengisian != null ? Number(d.arus_pengisian) : 0;
+                    const arusKeluarVal = d.arus_keluar_baterai != null ? Number(d.arus_keluar_baterai) : 0;
+                    
+                    // Grafik Historis mengambil nilai masuk (jika charging) atau nilai keluar (jika discharging)
+                    dataArusBat.push(d.status_pengisian === "ON" ? arusMasukVal : arusKeluarVal);
                     dataSoc.push(d.persentase_baterai != null ? Number(d.persentase_baterai) : null);
 
                     const tr = document.createElement('tr');
                     const tegBatStr = d.tegangan_baterai != null ? Number(d.tegangan_baterai).toFixed(1) : '--';
                     
-                    // Kolom Arus Keluar dihapus dari tabel
-                    const arusMasukVal = d.arus_pengisian != null ? Number(d.arus_pengisian) : null;
-                    const arusMStr = arusMasukVal != null ? arusMasukVal.toFixed(2) : '--';
-                    
+                    // Logika Status Pengisian untuk Tabel
                     let statusText = "Standby / Discharging";
                     let statusClass = "status-standby";
-                    
-                    if (d.status_pengisian) {
-                        const st = String(d.status_pengisian).toUpperCase();
-                        if (st === "ON" || st === "1" || st.includes("CHARGING")) {
-                            statusText = "Charging";
-                            statusClass = "status-charging";
-                        }
+                    let tampilArusMasuk = "0.00"; 
+
+                    if (d.status_pengisian === "ON" || d.status_pengisian === "1") {
+                        statusText = "Charging";
+                        statusClass = "status-charging";
+                        tampilArusMasuk = arusMasukVal.toFixed(2);
                     }
 
+                    // TAMPILAN TABEL: Hanya ada No, Jam, Tegangan Aki, Arus Masuk, dan Status Pengisian
                     tr.innerHTML = `
                         <td>${counter++}</td>
                         <td style="font-weight: 600;">${timeKey}</td>
                         <td>${tegBatStr}</td>
-                        <td>${arusMStr}</td>
+                        <td>${tampilArusMasuk}</td>
                         <td class="${statusClass}">${statusText}</td>
                     `;
                     tbody.appendChild(tr);
@@ -913,28 +535,18 @@
                 histChartDayaAc.setOption({ xAxis: { data: timeKeys }, series: [{ data: dataDayaAc }] });
                 histChartEnergiAc.setOption({ xAxis: { data: timeKeys }, series: [{ data: dataEnergiAc }] });
                 histChartTegBat.setOption({ xAxis: { data: timeKeys }, series: [{ data: dataTegBat }] });
+                histChartArusBat.setOption({ xAxis: { data: timeKeys }, series: [{ data: dataArusBat }] });
                 histChartSoc.setOption({ xAxis: { data: timeKeys }, series: [{ data: dataSoc }] });
-                
-            }).catch(error => {
-                console.error("Error loading historical data: ", error);
-            });
+            }).catch(error => console.error("Error loading historical data: ", error));
         }
 
         const datePicker = document.getElementById('history-date-picker');
         const btnLoad = document.getElementById('btn-load-history');
-        
         const todayStr = new Date().toISOString().split('T')[0];
+        
         datePicker.value = todayStr;
-        
         loadHistoricalData(todayStr);
-
-        btnLoad.addEventListener('click', () => {
-            const selected = datePicker.value;
-            if (selected) {
-                loadHistoricalData(selected);
-            }
-        });
-        
+        btnLoad.addEventListener('click', () => { if (datePicker.value) loadHistoricalData(datePicker.value); });
     </script>
 </body>
 </html>
