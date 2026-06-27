@@ -61,7 +61,7 @@
             100% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0); }
         }
 
-        /* CARDS & LAYOUT */
+        /* LAYOUT GRID */
         .top-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
         .card { background-color: var(--card-bg); border-radius: var(--radius-lg); padding: 1.5rem 2rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); display: flex; flex-direction: column; transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
@@ -73,24 +73,25 @@
         .data-value { font-weight: 600; font-size: 1.05rem; }
         .data-value.highlight { color: var(--primary); background-color: #EBF8FF; padding: 0.25rem 0.75rem; border-radius: var(--radius-md); }
 
-        /* GAUGES */
+        /* GAUGES DISPLAY */
         .gauge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; flex: 1; }
+        .gauge-grid.triple { grid-template-columns: repeat(3, 1fr); }
         .gauge-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; }
         .chart-label { text-align: center; font-weight: 600; font-size: 0.95rem; margin-bottom: -15px; z-index: 10; }
-        .gauge-container { width: 100%; height: 160px; }
+        .gauge-container { width: 100%; height: 150px; }
 
-        .metric-box { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg-color); border-radius: var(--radius-md); padding: 1rem; height: 100%; min-height: 160px; }
+        .metric-box { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg-color); border-radius: var(--radius-md); padding: 1rem; height: 100%; min-height: 150px; }
         .metric-box .label { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 0.5rem; }
         .metric-box .value { font-size: 1.75rem; font-weight: 700; color: var(--primary); }
 
         /* BATTERY GRAPHIC */
         .battery-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
         .battery-graphic { display: flex; flex-direction: row; align-items: center; justify-content: center; margin-bottom: 0.5rem; width: 100%; max-width: 250px; }
-        .battery-body { width: 100%; height: 60px; border: 4px solid var(--text-main); border-radius: 8px; position: relative; overflow: hidden; background: var(--bg-color); }
-        .battery-nub { width: 8px; height: 24px; background-color: var(--text-main); border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
+        .battery-body { width: 100%; height: 50px; border: 4px solid var(--text-main); border-radius: 8px; position: relative; overflow: hidden; background: var(--bg-color); }
+        .battery-nub { width: 8px; height: 20px; background-color: var(--text-main); border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
         .battery-fill { position: absolute; top: 0; left: 0; width: 0%; height: 100%; transition: width 0.5s ease-in-out, background-color 0.5s ease; }
 
-        /* BOTTOM PANEL */
+        /* ANALYTICS PANEL */
         .bottom-panel { background-color: var(--card-bg); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); }
         .history-header-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--bg-color); flex-wrap: wrap; gap: 1rem; }
         .history-header-controls h2 { margin-bottom: 0; padding-bottom: 0; border-bottom: none; font-size: 1.25rem; font-weight: 600; }
@@ -100,7 +101,7 @@
         
         .line-charts-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
         .chart-scroll-wrapper { width: 100%; overflow-x: auto; padding-bottom: 10px; }
-        .line-chart-container { width: 100%; min-width: 800px; height: 350px; background: transparent; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1rem; }
+        .line-chart-container { width: 100%; min-width: 800px; height: 320px; background: transparent; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1rem; }
         .empty-state { text-align: center; padding: 3rem 0; color: var(--text-muted); font-style: italic; background: var(--bg-color); border-radius: var(--radius-md); }
 
         /* LOG TABLE */
@@ -115,13 +116,15 @@
         .status-charging { color: #48bb78; font-weight: 600; }
         .status-standby { color: var(--text-muted); }
 
+        @media (max-width: 992px) {
+            .gauge-grid.triple { grid-template-columns: 1fr; }
+        }
         @media (max-width: 768px) {
             .dashboard-container { padding: 1rem; }
             .top-panel { grid-template-columns: 1fr; }
             .gauge-grid { grid-template-columns: 1fr; }
             .history-header-controls { flex-direction: column; align-items: flex-start; }
             .date-controls { width: 100%; flex-direction: column; align-items: stretch; }
-            .line-chart-container { height: 250px; }
         }
     </style>
 </head>
@@ -130,7 +133,7 @@
     <div class="dashboard-container">
         
         <header class="header-section">
-            <h1 class="page-title">Power Supply System</h1>
+            <h1 class="page-title">Power Supply System Dashboard</h1>
             <div id="status-banner" class="status-banner aman">
                 <span id="val-banner-beban">--</span>
             </div>
@@ -144,39 +147,37 @@
                 <div class="data-row"><span class="data-label">Status Inverter</span><span class="data-value" id="val-inverter">--</span></div>
                 <div class="data-row"><span class="data-label">Status Pengisian</span><span class="data-value" id="val-pengisian">--</span></div>
                 <div class="data-row"><span class="data-label">Mode Sistem</span><span class="data-value highlight" id="val-mode">--</span></div>
-                <div class="data-row"><span class="data-label">Status Beban</span><span class="data-value" id="val-status-beban">--</span></div>
+                <div class="data-row"><span class="data-label">Status Logika</span><span class="data-value" id="val-status-beban">--</span></div>
             </div>
 
             <div class="card">
-                <h2>Beban AC</h2>
+                <h2>Beban AC (Output)</h2>
                 <div class="gauge-grid">
                     <div class="gauge-wrapper"><div class="chart-label">Tegangan AC</div><div id="gauge-teg-ac" class="gauge-container"></div></div>
                     <div class="gauge-wrapper"><div class="chart-label">Arus AC</div><div id="gauge-arus-ac" class="gauge-container"></div></div>
                     <div class="gauge-wrapper"><div class="chart-label">Daya AC</div><div id="gauge-daya-ac" class="gauge-container"></div></div>
                     
                     <div class="metric-box">
-                        <span class="label">Energi AC</span>
+                        <span class="label">Total Energi</span>
                         <span class="value" id="val-energi-ac">-- <span style="font-size:1rem;">kWh</span></span>
                     </div>
                 </div>
             </div>
 
-            <div class="card">
-                <h2>Baterai DC</h2>
-                <div class="gauge-grid">
+            <div class="card" style="grid-column: span 1;">
+                <h2>Baterai DC (Sistem Aki)</h2>
+                <div class="gauge-grid triple">
                     <div class="gauge-wrapper"><div class="chart-label">Tegangan Aki</div><div id="gauge-teg-bat" class="gauge-container"></div></div>
-                    
                     <div class="gauge-wrapper"><div class="chart-label">Arus Pengisian</div><div id="gauge-arus-bat" class="gauge-container"></div></div>
                     <div class="gauge-wrapper"><div class="chart-label">Arus Keluar</div><div id="gauge-arus-keluar" class="gauge-container"></div></div>
-                    
-                    <div class="battery-wrapper metric-box" style="grid-column: 1 / -1; margin-top: 1rem;">
-                        <span class="label" style="text-align: center;">SOC Baterai</span>
-                        <div class="battery-graphic">
-                            <div class="battery-body"><div class="battery-fill" id="soc-fill"></div></div>
-                            <div class="battery-nub"></div>
-                        </div>
-                        <div class="battery-text value" id="soc-text" style="font-size:1.75rem; text-align: center;">0 %</div>
+                </div>
+                <div class="battery-wrapper metric-box" style="margin-top: 1rem; min-height: auto; padding: 0.75rem;">
+                    <span class="label">Kapasitas Aki (SOC)</span>
+                    <div class="battery-graphic">
+                        <div class="battery-body"><div class="battery-fill" id="soc-fill"></div></div>
+                        <div class="battery-nub"></div>
                     </div>
+                    <div class="value" id="soc-text" style="font-size:1.5rem; margin-top: 0.25rem;">0 %</div>
                 </div>
             </div>
 
@@ -184,41 +185,40 @@
 
         <section class="bottom-panel">
             <div class="history-header-controls">
-                <h2>Analitik Riwayat Harian</h2>
+                <h2>Analitik Riwayat Transmisi Daya</h2>
                 <div class="date-controls">
                     <input type="date" id="history-date-picker" class="date-input">
-                    <button id="btn-load-history" class="btn-primary">Tampilkan Data</button>
+                    <button id="btn-load-history" class="btn-primary">Muat Riwayat</button>
                 </div>
             </div>
 
             <div id="history-empty-state" class="empty-state" style="display: none;">
-                Tidak ada data riwayat untuk tanggal ini.
+                Tidak ada log data riwayat sistem untuk tanggal terpilih.
             </div>
 
             <div class="line-charts-grid" id="history-charts-container">
+                <div class="chart-scroll-wrapper"><div id="chart-hist-daya-ac" class="line-chart-container"></div></div>
+                <div class="chart-scroll-wrapper"><div id="chart-hist-teg-bat" class="line-chart-container"></div></div>
+                <div class="chart-scroll-wrapper"><div id="chart-hist-soc" class="line-chart-container"></div></div>
                 <div class="chart-scroll-wrapper"><div id="chart-hist-teg-ac" class="line-chart-container"></div></div>
                 <div class="chart-scroll-wrapper"><div id="chart-hist-arus-ac" class="line-chart-container"></div></div>
-                <div class="chart-scroll-wrapper"><div id="chart-hist-daya-ac" class="line-chart-container"></div></div>
-                <div class="chart-scroll-wrapper"><div id="chart-hist-energi-ac" class="line-chart-container"></div></div>
-                <div class="chart-scroll-wrapper"><div id="chart-hist-teg-bat" class="line-chart-container"></div></div>
                 <div class="chart-scroll-wrapper"><div id="chart-hist-arus-bat" class="line-chart-container"></div></div>
-                <div class="chart-scroll-wrapper"><div id="chart-hist-soc" class="line-chart-container"></div></div>
+                <div class="chart-scroll-wrapper"><div id="chart-hist-energi-ac" class="line-chart-container"></div></div>
             </div>
 
             <div class="battery-log-container" id="battery-log-section" style="display: none;">
-                <h3>Log Data Baterai</h3>
+                <h3>Log Data Tegangan & Pengisian Baterai</h3>
                 <table class="battery-log-table">
                     <thead>
                         <tr>
                             <th>No</th>
                             <th>Jam</th>
-                            <th>Tegangan Aki (V)</th>
-                            <th>Arus Masuk (A)</th>
+                            <th>Tegangan Aki Terkompensasi (V)</th>
+                            <th>Arus Masuk Charger (A)</th>
                             <th>Status Pengisian</th>
                         </tr>
                     </thead>
-                    <tbody id="batteryLogTableBody">
-                        </tbody>
+                    <tbody id="batteryLogTableBody"></tbody>
                 </table>
             </div>
         </section>
@@ -227,7 +227,7 @@
 
     <script>
         // ------------------------------------------
-        // 1. ECHARTS INITIALIZATION (Realtime Gauges)
+        // 1. GAUGES INITIALIZATION
         // ------------------------------------------
         const chartTegAc = echarts.init(document.getElementById('gauge-teg-ac'));
         const chartArusAc = echarts.init(document.getElementById('gauge-arus-ac'));
@@ -240,27 +240,27 @@
             return {
                 backgroundColor: 'transparent',
                 series: [{
-                    type: 'gauge', startAngle: 180, endAngle: 0, center: ['50%', '75%'], radius: '100%', min: 0, max: maxVal, splitNumber: 5,
-                    axisLine: { lineStyle: { width: 10, color: colorStops || [[0.3, '#48bb78'], [0.7, '#ecc94b'], [1, '#e53e3e']] } },
-                    pointer: { length: '55%', width: 6, offsetCenter: [0, '-10%'], itemStyle: { color: 'inherit' } },
-                    axisTick: { length: 6, lineStyle: { color: 'inherit' } }, splitLine: { length: 10, lineStyle: { color: 'inherit', width: 2 } },
-                    axisLabel: { color: '#718096', fontSize: 10, distance: 12 },
-                    detail: { fontSize: 16, offsetCenter: [0, '25%'], valueAnimation: true, formatter: '{value} ' + unit, color: 'inherit', fontWeight: 'bold' },
+                    type: 'gauge', startAngle: 180, endAngle: 0, center: ['50%', '80%'], radius: '100%', min: 0, max: maxVal, splitNumber: 5,
+                    axisLine: { lineStyle: { width: 8, color: colorStops || [[0.3, '#48bb78'], [0.7, '#ecc94b'], [1, '#e53e3e']] } },
+                    pointer: { length: '50%', width: 5, offsetCenter: [0, '-10%'], itemStyle: { color: 'inherit' } },
+                    axisTick: { length: 5, lineStyle: { color: 'inherit' } }, splitLine: { length: 8, lineStyle: { color: 'inherit', width: 2 } },
+                    axisLabel: { color: '#718096', fontSize: 9, distance: 10 },
+                    detail: { fontSize: 14, offsetCenter: [0, '20%'], valueAnimation: true, formatter: '{value} ' + unit, color: 'inherit', fontWeight: 'bold' },
                     data: [{ value: 0 }]
                 }]
             };
         }
 
-        const defaultGradient = [[0.3, '#48bb78'], [0.7, '#ecc94b'], [1, '#e53e3e']];
-        chartTegAc.setOption(createGaugeOption(300, 'V', defaultGradient));
-        chartArusAc.setOption(createGaugeOption(10, 'A', defaultGradient));
-        chartDayaAc.setOption(createGaugeOption(1000, 'W', defaultGradient));
-        chartTegBat.setOption(createGaugeOption(15, 'V', defaultGradient));
-        chartArusBat.setOption(createGaugeOption(20, 'A', defaultGradient));
-        chartArusKeluar.setOption(createGaugeOption(200, 'A', defaultGradient)); 
+        const gradientTheme = [[0.3, '#48bb78'], [0.7, '#ecc94b'], [1, '#e53e3e']];
+        chartTegAc.setOption(createGaugeOption(300, 'V', gradientTheme));
+        chartArusAc.setOption(createGaugeOption(10, 'A', gradientTheme));
+        chartDayaAc.setOption(createGaugeOption(1000, 'W', gradientTheme));
+        chartTegBat.setOption(createGaugeOption(15, 'V', gradientTheme));
+        chartArusBat.setOption(createGaugeOption(20, 'A', gradientTheme));
+        chartArusKeluar.setOption(createGaugeOption(100, 'A', gradientTheme)); 
 
         // ------------------------------------------
-        // 2. ECHARTS INITIALIZATION (History Line Charts)
+        // 2. LINE CHARTS INITIALIZATION (HISTORY)
         // ------------------------------------------
         const histChartTegAc = echarts.init(document.getElementById('chart-hist-teg-ac'));
         const histChartArusAc = echarts.init(document.getElementById('chart-hist-arus-ac'));
@@ -275,35 +275,35 @@
         function createLineOption(title, color, unit) {
             return {
                 backgroundColor: 'transparent',
-                title: { text: title, left: 'center', textStyle: { fontSize: 14, color: '#333333', fontWeight: 600 } },
+                title: { text: title, left: 'center', textStyle: { fontSize: 13, color: '#333', fontWeight: 600 } },
                 tooltip: { trigger: 'axis', valueFormatter: (value) => value + ' ' + unit },
-                grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-                xAxis: { type: 'category', boundaryGap: false, data: [], axisLine: { lineStyle: { color: '#cbd5e0' } }, axisLabel: { color: '#718096' } },
-                yAxis: { type: 'value', splitLine: { lineStyle: { color: '#edf2f7', type: 'dashed' } }, axisLabel: { color: '#718096' } },
+                grid: { left: '4%', right: '4%', bottom: '5%', containLabel: true },
+                xAxis: { type: 'category', boundaryGap: false, data: [], axisLine: { lineStyle: { color: '#cbd5e0' } } },
+                yAxis: { type: 'value', splitLine: { lineStyle: { color: '#edf2f7', type: 'dashed' } } },
                 series: [{
-                    name: title, type: 'line', smooth: true, itemStyle: { color: color }, lineStyle: { width: 3 },
+                    name: title, type: 'line', smooth: true, itemStyle: { color: color }, lineStyle: { width: 2.5 },
                     areaStyle: {
                         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: color }, { offset: 1, color: '#ffffff' }]),
-                        opacity: 0.2
+                        opacity: 0.15
                     },
                     data: []
                 }]
             };
         }
 
-        histChartTegAc.setOption(createLineOption('Tegangan AC', '#3182ce', 'V'));
-        histChartArusAc.setOption(createLineOption('Arus AC', '#dd6b20', 'A'));
-        histChartDayaAc.setOption(createLineOption('Daya AC', '#e53e3e', 'W'));
-        histChartEnergiAc.setOption(createLineOption('Energi AC', '#805ad5', 'kWh'));
-        histChartTegBat.setOption(createLineOption('Tegangan Baterai', '#3182ce', 'V'));
-        histChartArusBat.setOption(createLineOption('Arus Baterai/Pengisian', '#dd6b20', 'A'));
-        histChartSoc.setOption(createLineOption('SOC Baterai', '#38a169', '%'));
+        histChartTegAc.setOption(createLineOption('Riwayat Tegangan AC Terdistribusi', '#3182ce', 'V'));
+        histChartArusAc.setOption(createLineOption('Riwayat Arus Beban AC', '#dd6b20', 'A'));
+        histChartDayaAc.setOption(createLineOption('Grafik Konsumsi Daya AC (Watt)', '#e53e3e', 'W'));
+        histChartEnergiAc.setOption(createLineOption('Akumulasi Energi Listrik', '#805ad5', 'kWh'));
+        histChartTegBat.setOption(createLineOption('Grafik Tegangan Baterai (Kompensasi)', '#3182ce', 'V'));
+        histChartArusBat.setOption(createLineOption('Grafik Dinamika Arus DC Baterai', '#dd6b20', 'A'));
+        histChartSoc.setOption(createLineOption('Grafik Kapasitas Baterai (SOC)', '#38a169', '%'));
 
-        const allCharts = [chartTegAc, chartArusAc, chartDayaAc, chartTegBat, chartArusBat, chartArusKeluar, ...allHistCharts];
-        window.addEventListener('resize', function() { allCharts.forEach(chart => { if (chart) chart.resize(); }); });
+        const windowResizeCharts = [chartTegAc, chartArusAc, chartDayaAc, chartTegBat, chartArusBat, chartArusKeluar, ...allHistCharts];
+        window.addEventListener('resize', () => { windowResizeCharts.forEach(c => c && c.resize()); });
 
         // ------------------------------------------
-        // 3. FIREBASE CONFIGURATION
+        // 3. FIREBASE REALTIME SYNC
         // ------------------------------------------
         const firebaseConfig = {
             apiKey: "AIzaSyDNBwjTrdDQh2prE2olTlP1hmQ8779uszo",
@@ -316,67 +316,54 @@
         };
 
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-        const db = firebase.database();
-        const formatNum = (val, dec = 1) => val != null ? Number(val).toFixed(dec) : '--';
-        const formatStr = (val) => val || '--';
+        const database = firebase.database();
 
-        // ------------------------------------------
-        // 4. REALTIME LISTENER (/SmartATS/Realtime)
-        // ------------------------------------------
-        db.ref('/SmartATS/Realtime').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (!data) return;
+        database.ref('/SmartATS/Realtime').on('value', (snapshot) => {
+            const val = snapshot.val();
+            if (!val) return;
 
-            // Update Top Banner
-            const statusBebanStr = formatStr(data.status_beban);
-            const elBanner = document.getElementById('status-banner');
-            document.getElementById('val-banner-beban').textContent = statusBebanStr;
+            const statusStr = val.status_beban || '--';
+            document.getElementById('val-banner-beban').textContent = statusStr;
+            const banner = document.getElementById('status-banner');
             
-            if (statusBebanStr.includes("MATI") || statusBebanStr.includes("OVERLOAD") || statusBebanStr.includes("CRITICAL")) {
-                elBanner.className = 'status-banner overload';
-            } else if (statusBebanStr.includes("PENDING")) {
-                elBanner.className = 'status-banner warning';
+            if (statusStr.includes("OVERLOAD") || statusStr.includes("CRITICAL")) {
+                banner.className = 'status-banner overload';
+            } else if (statusStr.includes("PENDING")) {
+                banner.className = 'status-banner warning';
             } else {
-                elBanner.className = 'status-banner aman';
+                banner.className = 'status-banner aman';
             }
 
-            // Update Data Card
-            document.getElementById('val-pln').textContent = formatStr(data.status_pln);
-            document.getElementById('val-inverter').textContent = formatStr(data.status_inverter);
-            document.getElementById('val-pengisian').textContent = formatStr(data.status_pengisian);
-            document.getElementById('val-mode').textContent = formatStr(data.mode_sistem);
-            document.getElementById('val-status-beban').textContent = statusBebanStr;
+            document.getElementById('val-pln').textContent = val.status_pln || '--';
+            document.getElementById('val-inverter').textContent = val.status_inverter || '--';
+            document.getElementById('val-pengisian').textContent = val.status_pengisian || '--';
+            document.getElementById('val-mode').textContent = val.mode_sistem || '--';
+            document.getElementById('val-status-beban').textContent = statusStr;
 
-            // Update Gauges
-            chartTegAc.setOption({ series: [{ data: [{ value: Number(data.tegangan_ac || 0).toFixed(1) }] }] });
-            chartArusAc.setOption({ series: [{ data: [{ value: Number(data.arus_ac || 0).toFixed(2) }] }] });
-            chartDayaAc.setOption({ series: [{ data: [{ value: Number(data.daya_ac || 0).toFixed(1) }] }] });
-            document.getElementById('val-energi-ac').innerHTML = `${formatNum(data.energi_ac, 2)} <span style="font-size:1rem;">kWh</span>`;
+            chartTegAc.setOption({ series: [{ data: [{ value: Number(val.tegangan_ac || 0).toFixed(1) }] }] });
+            chartArusAc.setOption({ series: [{ data: [{ value: Number(val.arus_ac || 0).toFixed(2) }] }] });
+            chartDayaAc.setOption({ series: [{ data: [{ value: Number(val.daya_ac || 0).toFixed(1) }] }] });
+            document.getElementById('val-energi-ac').innerHTML = `${Number(val.energi_ac || 0).toFixed(2)} <span style="font-size:0.9rem;">kWh</span>`;
 
-            chartTegBat.setOption({ series: [{ data: [{ value: Number(data.tegangan_baterai || 0).toFixed(1) }] }] });
-            chartArusBat.setOption({ series: [{ data: [{ value: Number(data.arus_pengisian || 0).toFixed(2) }] }] });
-            chartArusKeluar.setOption({ series: [{ data: [{ value: Number(data.arus_keluar_baterai || 0).toFixed(2) }] }] });
+            // Pembacaan Tegangan Aki di sini otomatis adalah hasil kompensasi presisi dari ESP32
+            chartTegBat.setOption({ series: [{ data: [{ value: Number(val.tegangan_baterai || 0).toFixed(1) }] }] });
+            chartArusBat.setOption({ series: [{ data: [{ value: Number(val.arus_pengisian || 0).toFixed(2) }] }] });
+            chartArusKeluar.setOption({ series: [{ data: [{ value: Number(val.arus_keluar_baterai || 0).toFixed(2) }] }] });
             
-            // Battery SOC Graphic
-            const soc = Number(data.persentase_baterai || 0);
-            const fillEl = document.getElementById('soc-fill');
-            const textEl = document.getElementById('soc-text');
-            if (fillEl && textEl) {
-                textEl.innerText = soc.toFixed(0) + " %";
-                fillEl.style.width = soc.toFixed(0) + "%";
-                if (soc > 50) fillEl.style.backgroundColor = '#28a745';
-                else if (soc > 20) fillEl.style.backgroundColor = '#ffc107';
-                else fillEl.style.backgroundColor = '#dc3545';
-            }
+            const soc = Number(val.persentase_baterai || 0);
+            document.getElementById('soc-text').innerText = soc.toFixed(0) + " %";
+            const fill = document.getElementById('soc-fill');
+            fill.style.width = soc.toFixed(0) + "%";
+            fill.style.backgroundColor = soc > 50 ? '#2e7d32' : (soc > 20 ? '#f57c00' : '#d32f2f');
         });
 
         // ------------------------------------------
-        // 5. HISTORY DATA LOAD LOGIC
+        // 4. HISTORICAL RECOVERY LOGIC
         // ------------------------------------------
-        function loadHistoricalData(selectedDate) {
-            db.ref(`/SmartATS/History/${selectedDate}`).once('value').then(snapshot => {
-                const historyData = snapshot.val();
-                if (!historyData) {
+        function loadHistoricalData(dateStr) {
+            database.ref(`/SmartATS/History/${dateStr}`).once('value').then(snapshot => {
+                const history = snapshot.val();
+                if (!history) {
                     document.getElementById('history-empty-state').style.display = 'block';
                     document.getElementById('history-charts-container').style.display = 'none';
                     document.getElementById('battery-log-section').style.display = 'none';
@@ -387,72 +374,62 @@
                 document.getElementById('history-charts-container').style.display = 'grid'; 
                 document.getElementById('battery-log-section').style.display = 'block';
 
-                const timeKeys = Object.keys(historyData).sort();
-                const dataTegAc = [], dataArusAc = [], dataDayaAc = [], dataEnergiAc = [], dataTegBat = [], dataArusBat = [], dataSoc = [];
+                const keys = Object.keys(history).sort();
+                const tAc = [], iAc = [], pAc = [], eAc = [], tBat = [], iBat = [], socArr = [];
                 const tbody = document.getElementById('batteryLogTableBody');
                 tbody.innerHTML = '';
-                let counter = 1;
+                let index = 1;
 
-                timeKeys.forEach((timeKey) => {
-                    const d = historyData[timeKey];
+                keys.forEach((k) => {
+                    const row = history[k];
+                    tAc.push(row.tegangan_ac != null ? Number(row.tegangan_ac) : null);
+                    iAc.push(row.arus_ac != null ? Number(row.arus_ac) : null);
+                    pAc.push(row.daya_ac != null ? Number(row.daya_ac) : null);
+                    eAc.push(row.energi_ac != null ? Number(row.energi_ac) : null);
+                    tBat.push(row.tegangan_baterai != null ? Number(row.tegangan_baterai) : null);
                     
-                    dataTegAc.push(d.tegangan_ac != null ? Number(d.tegangan_ac) : null);
-                    dataArusAc.push(d.arus_ac != null ? Number(d.arus_ac) : null);
-                    dataDayaAc.push(d.daya_ac != null ? Number(d.daya_ac) : null);
-                    dataEnergiAc.push(d.energi_ac != null ? Number(d.energi_ac) : null);
-                    dataTegBat.push(d.tegangan_baterai != null ? Number(d.tegangan_baterai) : null);
+                    const chgCur = row.arus_pengisian != null ? Number(row.arus_pengisian) : 0;
+                    const dchgCur = row.arus_keluar_baterai != null ? Number(row.arus_keluar_baterai) : 0;
                     
-                    const arusMasukVal = d.arus_pengisian != null ? Number(d.arus_pengisian) : 0;
-                    const arusKeluarVal = d.arus_keluar_baterai != null ? Number(d.arus_keluar_baterai) : 0;
-                    
-                    // Grafik Historis mengambil nilai masuk (jika charging) atau nilai keluar (jika discharging)
-                    dataArusBat.push(d.status_pengisian === "ON" ? arusMasukVal : arusKeluarVal);
-                    dataSoc.push(d.persentase_baterai != null ? Number(d.persentase_baterai) : null);
+                    // Grafik arus baterai memetakan nilai pengisian atau pembuangan daya
+                    const isChargingState = (row.status_pengisian === "ON" || row.status_pengisian === "1");
+                    dataArusBat.push(isChargingState ? chgCur : -dchgCur);
+                    socArr.push(row.persentase_baterai != null ? Number(row.persentase_baterai) : null);
 
                     const tr = document.createElement('tr');
-                    const tegBatStr = d.tegangan_baterai != null ? Number(d.tegangan_baterai).toFixed(1) : '--';
-                    
-                    let statusText = "Standby / Discharging";
-                    let statusClass = "status-standby";
-                    let tampilArusMasuk = "0.00"; 
+                    const vBatFormated = row.tegangan_baterai != null ? Number(row.tegangan_baterai).toFixed(1) : '--';
+                    const chgCurFormated = isChargingState ? chgCur.toFixed(2) : "0.00";
 
-                    if (d.status_pengisian === "ON" || d.status_pengisian === "1") {
-                        statusText = "Charging";
-                        statusClass = "status-charging";
-                        tampilArusMasuk = arusMasukVal.toFixed(2);
-                    }
-
-                    // TAMPILAN TABEL TANPA ARUS KELUAR
+                    // ISI TABEL LOG SINKRON TANPA KOLOM ARUS KELUAR
                     tr.innerHTML = `
-                        <td>${counter++}</td>
-                        <td style="font-weight: 600;">${timeKey}</td>
-                        <td>${tegBatStr}</td>
-                        <td>${tampilArusMasuk}</td>
-                        <td class="${statusClass}">${statusText}</td>
+                        <td>${index++}</td>
+                        <td style="font-weight:600; color:#4a5568;">${k}</td>
+                        <td style="font-weight:500;">${vBatFormated} V</td>
+                        <td>${chgCurFormated} A</td>
+                        <td class="${isChargingState ? 'status-charging' : 'status-standby'}">
+                            ${isChargingState ? 'Ngecas (Charging)' : 'Discharging / Standby'}
+                        </td>
                     `;
                     tbody.appendChild(tr);
                 });
 
-                histChartTegAc.setOption({ xAxis: { data: timeKeys }, series: [{ data: dataTegAc }] });
-                histChartArusAc.setOption({ xAxis: { data: timeKeys }, series: [{ data: dataArusAc }] });
-                histChartDayaAc.setOption({ xAxis: { data: timeKeys }, series: [{ data: dataDayaAc }] });
-                histChartEnergiAc.setOption({ xAxis: { data: timeKeys }, series: [{ data: dataEnergiAc }] });
-                histChartTegBat.setOption({ xAxis: { data: timeKeys }, series: [{ data: dataTegBat }] });
-                histChartArusBat.setOption({ xAxis: { data: timeKeys }, series: [{ data: dataArusBat }] });
-                histChartSoc.setOption({ xAxis: { data: timeKeys }, series: [{ data: dataSoc }] });
-            }).catch(error => console.error("Error loading historical data: ", error));
+                histChartTegAc.setOption({ xAxis: { data: keys }, series: [{ data: tAc }] });
+                histChartArusAc.setOption({ xAxis: { data: keys }, series: [{ data: iAc }] });
+                histChartDayaAc.setOption({ xAxis: { data: keys }, series: [{ data: pAc }] });
+                histChartEnergiAc.setOption({ xAxis: { data: keys }, series: [{ data: eAc }] });
+                histChartTegBat.setOption({ xAxis: { data: keys }, series: [{ data: tBat }] });
+                histChartArusBat.setOption({ xAxis: { data: keys }, series: [{ data: dataArusBat }] });
+                histChartSoc.setOption({ xAxis: { data: keys }, series: [{ data: socArr }] });
+            });
         }
 
         const datePicker = document.getElementById('history-date-picker');
-        const btnLoad = document.getElementById('btn-load-history');
+        const tzOffset = (new Date()).getTimezoneOffset() * 60000; 
+        const localToday = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
         
-        // Ambil data hari ini saat halaman dimuat
-        const timezoneOffset = (new Date()).getTimezoneOffset() * 60000; 
-        const todayStr = (new Date(Date.now() - timezoneOffset)).toISOString().split('T')[0];
-        
-        datePicker.value = todayStr;
-        loadHistoricalData(todayStr);
-        btnLoad.addEventListener('click', () => { if (datePicker.value) loadHistoricalData(datePicker.value); });
+        datePicker.value = localToday;
+        loadHistoricalData(localToday);
+        document.getElementById('btn-load-history').addEventListener('click', () => { if (datePicker.value) loadHistoricalData(datePicker.value); });
     </script>
 </body>
 </html>
