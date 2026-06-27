@@ -75,7 +75,6 @@
 
         /* GAUGES DISPLAY */
         .gauge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; flex: 1; }
-        .gauge-grid.triple { grid-template-columns: repeat(3, 1fr); }
         .gauge-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; }
         .chart-label { text-align: center; font-weight: 600; font-size: 0.95rem; margin-bottom: -15px; z-index: 10; }
         .gauge-container { width: 100%; height: 150px; }
@@ -90,6 +89,11 @@
         .battery-body { width: 100%; height: 50px; border: 4px solid var(--text-main); border-radius: 8px; position: relative; overflow: hidden; background: var(--bg-color); }
         .battery-nub { width: 8px; height: 20px; background-color: var(--text-main); border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
         .battery-fill { position: absolute; top: 0; left: 0; width: 0%; height: 100%; transition: width 0.5s ease-in-out, background-color 0.5s ease; }
+
+        /* BATTERY HALF-SIZE (MOD) */
+        .battery-graphic.half-size { max-width: 120px; margin-bottom: 0.25rem; }
+        .battery-graphic.half-size .battery-body { height: 35px; border-width: 3px; border-radius: 6px; }
+        .battery-graphic.half-size .battery-nub { height: 14px; width: 6px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; }
 
         /* ANALYTICS PANEL */
         .bottom-panel { background-color: var(--card-bg); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); }
@@ -116,9 +120,6 @@
         .status-charging { color: #48bb78; font-weight: 600; }
         .status-standby { color: var(--text-muted); }
 
-        @media (max-width: 992px) {
-            .gauge-grid.triple { grid-template-columns: 1fr; }
-        }
         @media (max-width: 768px) {
             .dashboard-container { padding: 1rem; }
             .top-panel { grid-template-columns: 1fr; }
@@ -157,27 +158,29 @@
                     <div class="gauge-wrapper"><div class="chart-label">Arus AC</div><div id="gauge-arus-ac" class="gauge-container"></div></div>
                     <div class="gauge-wrapper"><div class="chart-label">Daya AC</div><div id="gauge-daya-ac" class="gauge-container"></div></div>
                     
-                    <div class="metric-box">
+                    <div class="metric-box" style="margin-top: 10px;">
                         <span class="label">Total Energi</span>
                         <span class="value" id="val-energi-ac">-- <span style="font-size:1rem;">kWh</span></span>
                     </div>
                 </div>
             </div>
 
-            <div class="card" style="grid-column: span 1;">
+            <div class="card">
                 <h2>Baterai DC (Sistem Aki)</h2>
-                <div class="gauge-grid triple">
+                <div class="gauge-grid">
                     <div class="gauge-wrapper"><div class="chart-label">Tegangan Aki</div><div id="gauge-teg-bat" class="gauge-container"></div></div>
                     <div class="gauge-wrapper"><div class="chart-label">Arus Pengisian</div><div id="gauge-arus-bat" class="gauge-container"></div></div>
+                    
                     <div class="gauge-wrapper"><div class="chart-label">Arus Keluar</div><div id="gauge-arus-keluar" class="gauge-container"></div></div>
-                </div>
-                <div class="battery-wrapper metric-box" style="margin-top: 1rem; min-height: auto; padding: 0.75rem;">
-                    <span class="label">Kapasitas Aki (SOC)</span>
-                    <div class="battery-graphic">
-                        <div class="battery-body"><div class="battery-fill" id="soc-fill"></div></div>
-                        <div class="battery-nub"></div>
+                    
+                    <div class="metric-box" style="margin-top: 10px;">
+                        <span class="label">SOC BATERAI</span>
+                        <div class="battery-graphic half-size" style="margin-top: 8px;">
+                            <div class="battery-body"><div class="battery-fill" id="soc-fill"></div></div>
+                            <div class="battery-nub"></div>
+                        </div>
+                        <div class="value" id="soc-text" style="font-size:1.5rem; margin-top: 5px;">0 %</div>
                     </div>
-                    <div class="value" id="soc-text" style="font-size:1.5rem; margin-top: 0.25rem;">0 %</div>
                 </div>
             </div>
 
@@ -345,7 +348,6 @@
             chartDayaAc.setOption({ series: [{ data: [{ value: Number(val.daya_ac || 0).toFixed(1) }] }] });
             document.getElementById('val-energi-ac').innerHTML = `${Number(val.energi_ac || 0).toFixed(2)} <span style="font-size:0.9rem;">kWh</span>`;
 
-            // Pembacaan Tegangan Aki di sini otomatis adalah hasil kompensasi presisi dari ESP32
             chartTegBat.setOption({ series: [{ data: [{ value: Number(val.tegangan_baterai || 0).toFixed(1) }] }] });
             chartArusBat.setOption({ series: [{ data: [{ value: Number(val.arus_pengisian || 0).toFixed(2) }] }] });
             chartArusKeluar.setOption({ series: [{ data: [{ value: Number(val.arus_keluar_baterai || 0).toFixed(2) }] }] });
@@ -391,16 +393,14 @@
                     const chgCur = row.arus_pengisian != null ? Number(row.arus_pengisian) : 0;
                     const dchgCur = row.arus_keluar_baterai != null ? Number(row.arus_keluar_baterai) : 0;
                     
-                    // Grafik arus baterai memetakan nilai pengisian atau pembuangan daya
                     const isChargingState = (row.status_pengisian === "ON" || row.status_pengisian === "1");
-                    dataArusBat.push(isChargingState ? chgCur : -dchgCur);
+                    iBat.push(isChargingState ? chgCur : -dchgCur);
                     socArr.push(row.persentase_baterai != null ? Number(row.persentase_baterai) : null);
 
                     const tr = document.createElement('tr');
                     const vBatFormated = row.tegangan_baterai != null ? Number(row.tegangan_baterai).toFixed(1) : '--';
                     const chgCurFormated = isChargingState ? chgCur.toFixed(2) : "0.00";
 
-                    // ISI TABEL LOG SINKRON TANPA KOLOM ARUS KELUAR
                     tr.innerHTML = `
                         <td>${index++}</td>
                         <td style="font-weight:600; color:#4a5568;">${k}</td>
@@ -418,7 +418,7 @@
                 histChartDayaAc.setOption({ xAxis: { data: keys }, series: [{ data: pAc }] });
                 histChartEnergiAc.setOption({ xAxis: { data: keys }, series: [{ data: eAc }] });
                 histChartTegBat.setOption({ xAxis: { data: keys }, series: [{ data: tBat }] });
-                histChartArusBat.setOption({ xAxis: { data: keys }, series: [{ data: dataArusBat }] });
+                histChartArusBat.setOption({ xAxis: { data: keys }, series: [{ data: iBat }] });
                 histChartSoc.setOption({ xAxis: { data: keys }, series: [{ data: socArr }] });
             });
         }
