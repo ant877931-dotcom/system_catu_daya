@@ -76,7 +76,7 @@ realtimeRef.on('value', (snapshot) => {
 
     // --- Update Card 3: Parameter Baterai ---
     elTeganganBaterai.textContent = `${formatNum(data.tegangan_baterai, 1)} V`;
-    elArusBeban.textContent = `${formatNum(data.arus_beban_baterai, 2)} A`;
+    elArusBeban.textContent = `${formatNum(data.arus_keluar_baterai, 2)} A`;
     elStatusBeban.textContent = formatStr(data.status_beban);
 
     // Battery SOC Progress Bar
