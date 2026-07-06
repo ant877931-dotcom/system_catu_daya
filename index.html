@@ -394,7 +394,7 @@
                     const dchgCur = row.arus_keluar_baterai != null ? Number(row.arus_keluar_baterai) : 0;
                     
                     const isChargingState = (row.status_pengisian === "ON" || row.status_pengisian === "1");
-                    iBat.push(isChargingState ? chgCur : -dchgCur);
+iBat.push(isChargingState ? chgCur : dchgCur);
                     socArr.push(row.persentase_baterai != null ? Number(row.persentase_baterai) : null);
 
                     const tr = document.createElement('tr');
