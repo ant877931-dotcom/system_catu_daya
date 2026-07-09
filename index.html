@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -15,7 +16,7 @@
 
     <style>
         /* =========================================
-           CSS VARIABLES & GLOBAL STYLES
+           CSS VARIABLES & GLOBAL STYLES (Internal Backup)
            ========================================= */
         :root {
             --bg-color: #F4F7F6;
@@ -183,6 +184,9 @@
                 <div class="chart-scroll-wrapper"><div id="chart-hist-teg-ac" class="line-chart-container"></div></div>
                 <div class="chart-scroll-wrapper"><div id="chart-hist-arus-ac" class="line-chart-container"></div></div>
                 <div class="chart-scroll-wrapper"><div id="chart-hist-arus-bat" class="line-chart-container"></div></div>
+                
+                <div class="chart-scroll-wrapper"><div id="chart-hist-arus-keluar" class="line-chart-container"></div></div>
+                
                 <div class="chart-scroll-wrapper"><div id="chart-hist-energi-ac" class="line-chart-container"></div></div>
             </div>
 
@@ -205,9 +209,11 @@
 
     </div>
 
+    <script src="app.js"></script>
+
     <script>
         // ------------------------------------------
-        // 1. GAUGES INITIALIZATION
+        // 1. GAUGES INITIALIZATION (ECharts)
         // ------------------------------------------
         const chartTegAc = echarts.init(document.getElementById('gauge-teg-ac'));
         const chartArusAc = echarts.init(document.getElementById('gauge-arus-ac'));
@@ -249,8 +255,12 @@
         const histChartTegBat = echarts.init(document.getElementById('chart-hist-teg-bat'));
         const histChartArusBat = echarts.init(document.getElementById('chart-hist-arus-bat'));
         const histChartSoc = echarts.init(document.getElementById('chart-hist-soc'));
+        
+        // PERBAIKAN: Inisialisasi Chart Arus Keluar
+        const histChartArusKeluar = echarts.init(document.getElementById('chart-hist-arus-keluar'));
 
-        const allHistCharts = [histChartTegAc, histChartArusAc, histChartDayaAc, histChartEnergiAc, histChartTegBat, histChartArusBat, histChartSoc];
+        // PERBAIKAN: Masukkan chart baru ke dalam array resize
+        const allHistCharts = [histChartTegAc, histChartArusAc, histChartDayaAc, histChartEnergiAc, histChartTegBat, histChartArusBat, histChartArusKeluar, histChartSoc];
 
         function createLineOption(title, color, unit) {
             return {
@@ -276,14 +286,17 @@
         histChartDayaAc.setOption(createLineOption('Grafik Konsumsi Daya AC (Watt)', '#e53e3e', 'W'));
         histChartEnergiAc.setOption(createLineOption('Akumulasi Energi Listrik', '#805ad5', 'kWh'));
         histChartTegBat.setOption(createLineOption('Grafik Tegangan Baterai (Kompensasi)', '#3182ce', 'V'));
-        histChartArusBat.setOption(createLineOption('Grafik Dinamika Arus DC Baterai', '#dd6b20', 'A'));
         histChartSoc.setOption(createLineOption('Grafik Kapasitas Baterai (SOC)', '#38a169', '%'));
+
+        // PERBAIKAN: Opsi warna dan label grafik Arus dipisah (Hijau=Ngecas, Merah=Keluar)
+        histChartArusBat.setOption(createLineOption('Riwayat Arus Pengisian Baterai (Ngecas)', '#38a169', 'A'));
+        histChartArusKeluar.setOption(createLineOption('Riwayat Arus Keluar (Beban DC/Inverter)', '#e53e3e', 'A'));
 
         const windowResizeCharts = [chartTegAc, chartArusAc, chartDayaAc, chartTegBat, chartArusBat, chartArusKeluar, ...allHistCharts];
         window.addEventListener('resize', () => { windowResizeCharts.forEach(c => c && c.resize()); });
 
         // ------------------------------------------
-        // 3. FIREBASE REALTIME SYNC
+        // 3. FIREBASE REALTIME SYNC (ECharts & DOM)
         // ------------------------------------------
         const firebaseConfig = {
             apiKey: "AIzaSyDNBwjTrdDQh2prE2olTlP1hmQ8779uszo",
@@ -341,7 +354,9 @@
                 document.getElementById('battery-log-section').style.display = 'block';
 
                 const keys = Object.keys(history).sort();
-                const tAc = [], iAc = [], pAc = [], eAc = [], tBat = [], iBat = [], socArr = [];
+                
+                // PERBAIKAN: Array dipisah untuk chg (Charging) dan dchg (Discharging)
+                const tAc = [], iAc = [], pAc = [], eAc = [], tBat = [], iChg = [], iDchg = [], socArr = [];
                 const tbody = document.getElementById('batteryLogTableBody');
                 tbody.innerHTML = '';
                 let index = 1;
@@ -359,8 +374,10 @@
                     
                     const isChargingState = (row.status_pengisian === "ON" || row.status_pengisian === "1");
                     
-                    // Diubah menjadi positif mutlak (tidak dinegatifkan lagi saat discharging)
-                    iBat.push(isChargingState ? chgCur : dchgCur);
+                    // PERBAIKAN: Memasukkan arus ke array masing-masing
+                    iChg.push(chgCur);
+                    iDchg.push(dchgCur);
+                    
                     socArr.push(row.persentase_baterai != null ? Number(row.persentase_baterai) : null);
 
                     const tr = document.createElement('tr');
@@ -384,8 +401,11 @@
                 histChartDayaAc.setOption({ xAxis: { data: keys }, series: [{ data: pAc }] });
                 histChartEnergiAc.setOption({ xAxis: { data: keys }, series: [{ data: eAc }] });
                 histChartTegBat.setOption({ xAxis: { data: keys }, series: [{ data: tBat }] });
-                histChartArusBat.setOption({ xAxis: { data: keys }, series: [{ data: iBat }] });
                 histChartSoc.setOption({ xAxis: { data: keys }, series: [{ data: socArr }] });
+                
+                // PERBAIKAN: Mengirim data ke masing-masing Chart secara terpisah
+                histChartArusBat.setOption({ xAxis: { data: keys }, series: [{ data: iChg }] });
+                histChartArusKeluar.setOption({ xAxis: { data: keys }, series: [{ data: iDchg }] });
             });
         }
 
