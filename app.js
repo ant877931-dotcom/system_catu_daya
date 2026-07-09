@@ -1,9 +1,25 @@
 // ==========================================
-// Firebase Initialization & Realtime Sync (Lainnya)
+// Firebase Initialization & Realtime Sync
 // ==========================================
 
+const firebaseConfig = {
+    apiKey: "AIzaSyDNBwjTrdDQh2prE2olTlP1hmQ8779uszo",
+    authDomain: "ats-system-9640b.firebaseapp.com",
+    databaseURL: "https://ats-system-9640b-default-rtdb.firebaseio.com",
+    projectId: "ats-system-9640b",
+    storageBucket: "ats-system-9640b.firebasestorage.app",
+    messagingSenderId: "742975280398",
+    appId: "1:742975280398:web:ece278220fafe180e6b35f",
+    measurementId: "G-Y4XFY1Q180"
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.database();
+
 // --- DOM References ---
-// Top Banner (Jika layout alternatif digunakan)
+// Top Banner
 const elStatusPengisianBanner = document.getElementById('val-status-pengisian-banner');
 const elBannerDaya = document.getElementById('val-banner-daya');
 const elBadgeStatus = document.getElementById('badge-status');
@@ -30,7 +46,7 @@ const elValPersentase = document.getElementById('val-persentase');
 const formatNum = (val, decimals = 1) => val !== undefined && val !== null ? Number(val).toFixed(decimals) : '--';
 const formatStr = (val) => val || '--';
 
-// Firebase Database Ref instance assuming already initialized in index.html
+// 2. Real-time Listener for Panel & Banner Data
 const realtimeRef = db.ref('/SmartATS/Realtime');
 
 realtimeRef.on('value', (snapshot) => {
@@ -38,23 +54,24 @@ realtimeRef.on('value', (snapshot) => {
     if (!data) return;
 
     // --- Update Card 1: Status Sistem ---
-    if (elStatusPln) elStatusPln.textContent = formatStr(data.status_pln);
-    if (elStatusInverter) elStatusInverter.textContent = formatStr(data.status_inverter);
-    if (elStatusPengisian) elStatusPengisian.textContent = formatStr(data.status_pengisian);
-    if (elModeSistem) elModeSistem.textContent = formatStr(data.mode_sistem);
+    elStatusPln.textContent = formatStr(data.status_pln);
+    elStatusInverter.textContent = formatStr(data.status_inverter);
+    elStatusPengisian.textContent = formatStr(data.status_pengisian);
+    elModeSistem.textContent = formatStr(data.mode_sistem);
 
     // --- Update Card 2: Parameter AC ---
-    if (elTeganganAc) elTeganganAc.textContent = `${formatNum(data.tegangan_ac, 1)} V`;
-    if (elArusAc) elArusAc.textContent = `${formatNum(data.arus_ac, 2)} A`;
+    elTeganganAc.textContent = `${formatNum(data.tegangan_ac, 1)} V`;
+    elArusAc.textContent = `${formatNum(data.arus_ac, 2)} A`;
     
     const dayaAcRaw = data.daya_ac !== undefined && data.daya_ac !== null ? Number(data.daya_ac) : null;
-    if (elDayaAc) elDayaAc.textContent = dayaAcRaw !== null ? `${dayaAcRaw.toFixed(1)} W` : '-- W';
-    if (elEnergiAc) elEnergiAc.textContent = `${formatNum(data.energi_ac, 2)} kWh`;
+    elDayaAc.textContent = dayaAcRaw !== null ? `${dayaAcRaw.toFixed(1)} W` : '-- W';
+    elEnergiAc.textContent = `${formatNum(data.energi_ac, 2)} kWh`;
 
     // --- Update Card 3: Parameter Baterai ---
-    if (elTeganganBaterai) elTeganganBaterai.textContent = `${formatNum(data.tegangan_baterai, 1)} V`;
+    elTeganganBaterai.textContent = `${formatNum(data.tegangan_baterai, 1)} V`;
     
-    if (elArusBeban) elArusBeban.textContent = `${formatNum(data.arus_keluar_baterai, 2)} A`;
+    // Perbaikan Mismatch Variabel: disinkronkan dengan key 'arus_keluar_baterai' dari Firebase ESP32
+    elArusBeban.textContent = `${formatNum(data.arus_keluar_baterai, 2)} A`;
 
     // Battery SOC Progress Bar
     const soc = data.persentase_baterai !== undefined && data.persentase_baterai !== null ? Number(data.persentase_baterai) : 0;
@@ -87,8 +104,9 @@ realtimeRef.on('value', (snapshot) => {
 });
 
 // ==========================================
-// History Feature Logic (Alternatif DOM)
+// History Feature Logic
 // ==========================================
+
 const elCurrentDate = document.getElementById('current-date');
 const elHistoryContainer = document.getElementById('history-container');
 
